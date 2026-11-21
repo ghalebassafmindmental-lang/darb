@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>درب</title>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#f1f5ff;--mute:#9aa8c7;--cy:#22d3ee;--vi:#8b5cf6;--pk:#f472b6;--gl:rgba(255,255,255,.07);--gb:rgba(255,255,255,.14)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:#060a16;color:var(--ink);font-family:"Readex Pro",Tahoma,system-ui,sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:-20%;background:radial-gradient(40% 35% at 25% 30%,rgba(139,92,246,.35),transparent),radial-gradient(35% 30% at 78% 70%,rgba(34,211,238,.28),transparent);animation:au 14s ease-in-out infinite alternate;z-index:0}
+@keyframes au{to{transform:translate(6%,-4%) scale(1.15)}}
+#gl{position:fixed;inset:0;width:100%;height:100%;z-index:0;touch-action:none;cursor:grab}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid var(--cy);outline-offset:2px}
+.ui{position:relative;z-index:1;min-height:100vh;pointer-events:none;padding:calc(12px + env(safe-area-inset-top,0px)) 16px calc(110px + env(safe-area-inset-bottom,0px));display:none;max-width:1200px;margin:auto}
+.ui.on{display:block}.ui>*{pointer-events:auto}
+.glass{background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.03));backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border:1px solid var(--gb);border-radius:26px;padding:16px;box-shadow:0 20px 50px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.18)}
+.glass h3{font-size:13px;font-weight:400;color:var(--mute);margin-bottom:10px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}
+.clk{font-size:clamp(48px,9vw,96px);font-weight:200;line-height:1;direction:ltr;background:linear-gradient(90deg,#fff,var(--cy) 60%,var(--vi));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hi{color:var(--mute);font-size:15px}
+.seg{display:flex;gap:4px;padding:4px;border-radius:99px;pointer-events:auto}
+.seg button{padding:8px 16px;border-radius:99px;color:var(--mute);font-size:14px}
+.seg [aria-pressed=true]{background:linear-gradient(90deg,var(--cy),var(--vi));color:#06101f;font-weight:700}
+.stage{display:grid;grid-template-columns:300px 1fr 400px;gap:16px;align-items:start;margin-top:18px;pointer-events:none}
+.stage>*{pointer-events:auto}
+.stack{display:flex;flex-direction:column;gap:16px}
+.mid{height:60vh;pointer-events:none!important}
+.np b{font-size:19px;display:block}.np .hi{margin-bottom:12px}
+.eq{display:flex;gap:4px;height:34px;align-items:flex-end;margin-bottom:14px}
+.eq i{flex:1;background:linear-gradient(var(--cy),var(--vi));border-radius:3px;height:20%;animation:eq 1s ease-in-out infinite alternate;animation-play-state:paused}
+.play .eq i{animation-play-state:running}
+@keyframes eq{to{height:100%}}
+.eq i:nth-child(2n){animation-delay:-.4s}.eq i:nth-child(3n){animation-delay:-.7s;animation-duration:.7s}
+.ctl{display:flex;gap:10px;justify-content:center}
+.ctl button{width:54px;height:54px;border-radius:50%;background:var(--gl);border:1px solid var(--gb);font-size:20px}
+.ctl .p{background:linear-gradient(135deg,var(--cy),var(--vi));box-shadow:0 0 24px rgba(34,211,238,.5)}
+.veh{display:flex;align-items:center;gap:14px}
+.ring{width:96px;height:96px;transform:rotate(-90deg);flex:none}
+.ring circle{fill:none;stroke-width:9;stroke-linecap:round}
+.ring .bg{stroke:rgba(255,255,255,.1)}.ring .fg{stroke:url(#rg);stroke-dasharray:264;stroke-dashoffset:264;transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 0 6px var(--cy))}
+.veh b{font-size:20px;display:block}.veh small{color:var(--mute)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;perspective:700px}
+.tile{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 2px;border-radius:20px;background:var(--gl);border:1px solid var(--gb);font-size:12px;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .15s,box-shadow .2s;animation:in .6s cubic-bezier(.2,.9,.3,1.2) both;animation-delay:calc(var(--i)*70ms)}
+.tile:hover{box-shadow:0 12px 30px rgba(34,211,238,.25)}.tile:active{transform:scale(.93)}
+.tile i{font-style:normal;font-size:27px;width:54px;height:54px;display:grid;place-items:center;border-radius:17px;background:var(--g);box-shadow:0 8px 18px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.4)}
+@keyframes in{from{opacity:0;transform:translateY(30px) rotateX(-50deg)}}
+.stats{display:flex;justify-content:space-around;direction:ltr;margin-top:12px}
+.stats span{display:block;font-size:22px;font-weight:600;text-align:center}.stats small{color:var(--mute);display:block;text-align:center}
+.spc{height:36vh;pointer-events:none!important}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--gb)}.row:last-child{border:0}
+.row small{color:var(--mute)}
+.btn{padding:12px 22px;border-radius:16px;background:linear-gradient(90deg,var(--cy),var(--vi));color:#06101f;font-weight:700;box-shadow:0 8px 24px rgba(139,92,246,.4)}
+input,select{padding:12px;border-radius:14px;border:1px solid var(--gb);background:rgba(0,0,0,.3);color:var(--ink);font:inherit;min-width:0}
+.form{display:flex;gap:8px;margin-bottom:14px}.form input,.form select{flex:1}
+.tab{display:none}.tab.on{display:flex;flex-direction:column;gap:14px;animation:in .5s both}
+.nav{position:fixed;z-index:3;bottom:calc(12px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);display:flex;gap:4px;padding:6px;border-radius:99px;width:min(92vw,420px)}
+.nav button{flex:1;display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--mute);padding:6px 0;border-radius:99px}
+.nav i{font-style:normal;font-size:19px}.nav [aria-selected=true]{background:rgba(255,255,255,.12);color:#fff}
+.msg{position:fixed;z-index:5;top:calc(16px + env(safe-area-inset-top,0px));left:50%;transform:translate(-50%,-80px);padding:10px 22px;border-radius:99px;background:linear-gradient(90deg,var(--cy),var(--vi));color:#06101f;font-weight:700;transition:transform .35s cubic-bezier(.2,.9,.3,1.3)}
+.msg.show{transform:translate(-50%,0)}
+.empty{color:var(--mute);text-align:center;padding:10px}
+.ok{color:#6ee7b7}.wm{color:#fbbf24}
+html:not(.L) .stage{grid-template-columns:1fr}html:not(.L) .mid{display:none}html:not(.L) .spc{display:block}html:not(.L) .top{flex-direction:column;gap:8px}.L .spc{display:none}
+.L #car.ui.on{position:fixed;left:50%;top:50%;width:var(--sw,1280px);height:500px;min-height:0;max-width:none;margin:0;overflow:hidden;display:flex;flex-direction:column;padding:14px 24px;transform-origin:center;transform:translate(-50%,-50%) scale(var(--k,1))}
+.L #car .stage{flex:1;min-height:0;grid-template-columns:270px 1fr 410px;margin-top:8px}
+.L #car .mid{height:auto}
+.rot #car.ui.on{transform:translate(-50%,-50%) rotate(90deg) scale(var(--k,1))}
+.rot #gl{inset:auto;top:0;left:0;width:100vh;height:100vw;transform-origin:0 0;transform:translateX(100vw) rotate(90deg)}
+.S .clk{font-size:44px}.S .glass{padding:10px;border-radius:20px}.S .tile i{width:40px;height:40px;font-size:21px;border-radius:13px}.S .tile{padding:8px 2px;font-size:11px}.S .stack{gap:10px}.S .eq{display:none}.S .ring{width:70px;height:70px}
+.L #car .clk{font-size:60px}.L .eq{display:none}.L .tile i{width:62px;height:62px;font-size:31px}.L .tile{font-size:13px;padding:14px 2px}.L .grid{gap:12px}
+[hidden]{display:none!important}
+.rad{position:absolute;inset:10px;z-index:20;background:rgba(7,10,24,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--gb);border-radius:28px;padding:16px;display:flex;flex-direction:column;gap:10px;animation:in .4s both}
+.rh{display:flex;align-items:center;gap:12px}.rh b{font-size:20px;flex:none}.rh #rx{margin-inline-start:auto;width:44px;height:44px;border-radius:50%;background:var(--gl);border:1px solid var(--gb)}
+.chips{display:flex;gap:8px;overflow:auto;flex:none}.chips button{padding:8px 16px;border-radius:99px;background:var(--gl);border:1px solid var(--gb);white-space:nowrap}.chips .on{background:linear-gradient(90deg,var(--cy),var(--vi));color:#06101f;font-weight:700}
+.rl{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;align-content:start}
+.st{display:flex;align-items:center;gap:10px;padding:10px;border-radius:18px;background:var(--gl);border:1px solid var(--gb);cursor:pointer}
+.st.on{border-color:var(--cy);box-shadow:0 0 18px rgba(34,211,238,.35)}
+.st i{font-style:normal;flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-weight:700;background:var(--g)}
+.st span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.st small{display:block;color:var(--mute)}
+.fv{font-size:22px;padding:4px 8px;color:#fbbf24}
+.rl .empty{grid-column:1/-1;padding:30px}
+.rp{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--gb);flex:none}.rp b{font-size:17px}
+.rp .p{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--cy),var(--vi));font-size:22px;box-shadow:0 0 22px rgba(34,211,238,.45)}
+.rh #px{margin-inline-start:auto;width:44px;height:44px;border-radius:50%;background:var(--gl);border:1px solid var(--gb)}
+.pnx{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;border-radius:22px;background:linear-gradient(135deg,rgba(34,211,238,.18),rgba(139,92,246,.18));border:1px solid var(--gb)}
+.pnx small{color:var(--mute);display:block}.pnx b{font-size:34px}.pcd{font-size:50px;font-weight:200;direction:ltr}
+.pls{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;flex:1;align-content:center}
+.pc{padding:16px 6px;border-radius:20px;background:var(--gl);border:1px solid var(--gb);text-align:center;transition:.3s}
+.pc small{color:var(--mute);display:block}.pc b{font-size:26px;display:block;direction:ltr;font-weight:600}
+.pc:nth-child(2){opacity:.7}
+.pc.n{border-color:var(--cy);background:rgba(34,211,238,.14);box-shadow:0 0 24px rgba(34,211,238,.35);transform:translateY(-4px) scale(1.04)}
+html:not(.L) .pls{grid-template-columns:repeat(2,1fr)}
+textarea{padding:12px;border-radius:14px;border:1px solid var(--gb);background:rgba(0,0,0,.3);color:var(--ink);font:inherit;height:70px;resize:none;min-width:0}
+.tvp{flex-direction:row;gap:14px}
+.tvl{width:340px;flex:none;display:flex;flex-direction:column;gap:10px;min-height:0}
+.tvv{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
+.tvv video{width:100%;flex:1;min-height:0;background:#000;border-radius:20px;object-fit:contain}
+.tvi{display:flex;justify-content:space-between;align-items:center;gap:10px}.tvi b{font-size:18px}.tvi .hi{font-size:12px}
+.tvf{flex-direction:column;margin:0}
+.tls{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:8px}
+html:not(.L) .tvp{flex-direction:column-reverse}html:not(.L) .tvl{width:100%}
+.rh #sx{margin-inline-start:auto;width:44px;height:44px;border-radius:50%;background:var(--gl);border:1px solid var(--gb)}
+@keyframes wig{from{transform:rotate(-2.5deg)}to{transform:rotate(2.5deg)}}
+.ed .tile{animation:wig .3s ease-in-out infinite alternate}.tile.sel{outline:3px solid var(--cy);box-shadow:0 0 22px var(--cy)}
+.rh #ox{margin-inline-start:auto;width:44px;height:44px;border-radius:50%;background:var(--gl);border:1px solid var(--gb)}
+.ot{display:none;flex:1;min-height:0;gap:12px}.ot.on{display:flex}.ol{flex-direction:column;overflow:auto}
+.gz{flex:1;min-width:0;text-align:center;padding:10px;border-radius:22px;background:var(--gl);border:1px solid var(--gb);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gz svg{width:100%;max-width:230px}.gz path{fill:none;stroke-width:9;stroke-linecap:round}.gb2{stroke:rgba(255,255,255,.1)}
+.gf{stroke:url(#rg);stroke-dasharray:157;stroke-dashoffset:157;transition:stroke-dashoffset .6s;filter:drop-shadow(0 0 5px var(--cy))}
+.gz b{display:block;font-size:46px;font-weight:300;margin-top:-34px;direction:ltr}.gz small{color:var(--mute)}
+.os{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:270px;flex:none;align-content:center}
+.os div{padding:14px 6px;border-radius:20px;background:var(--gl);border:1px solid var(--gb);text-align:center}.os b{font-size:30px;display:block;direction:ltr}.os small{color:var(--mute);font-size:12px}
+html:not(.L) #o0{flex-wrap:wrap}html:not(.L) .os{width:100%}
+#set{overflow:auto}
+.gate{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:16px;background:rgba(6,10,22,.92);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.gc{width:min(400px,100%);display:flex;flex-direction:column;gap:10px;text-align:center;max-height:100%;overflow:auto}
+.gl{font-size:46px;line-height:1}.gm{min-height:20px;color:#fbbf24;font-size:13px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="gl" aria-label="مجسم ثلاثي الأبعاد للسيارة، اسحب لتدويره"></canvas>
+
+<main class="ui on" id="car">
+ <div class="top"><div><div class="hi" id="hi"></div><div class="clk" id="clk">00:00</div></div>
+  <div class="seg glass" style="padding:4px" role="group"><button id="bc" aria-pressed="true">شاشة السيارة</button><button id="bp" aria-pressed="false">الموبايل</button><button id="fs" aria-label="ملء الشاشة بالعرض">⛶</button><button id="gs" aria-label="الإعدادات">⚙</button></div></div>
+ <div class="stage">
+  <div class="stack">
+   <section class="glass np" id="np"><h3>يشتغل الآن</h3><b id="npn">اختر محطة راديو</b><div class="hi" id="nps">اضغط على الراديو</div>
+    <div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="ctl"><button aria-label="السابق">⏮</button><button class="p" id="pp" aria-label="تشغيل">▶</button><button aria-label="التالي">⏭</button></div></section>
+   <section class="glass"><div class="veh"><svg class="ring" viewBox="0 0 100 100"><defs><linearGradient id="rg"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><circle class="bg" cx="50" cy="50" r="42"/><circle class="fg" id="rf" cx="50" cy="50" r="42"/></svg>
+    <div><small>مركبتي</small><b id="vn"></b><small>باقي <span id="svc"></span> كم للصيانة</small></div></div>
+    <div class="stats"><div><span id="odo"></span><small>العداد (كم)</small></div></div></section>
+  </div>
+  <div class="mid"></div>
+  <section class="glass"><h3 style="display:flex;justify-content:space-between;align-items:center">تطبيقاتك<button id="ted" style="color:var(--cy);font-size:13px">✎ ترتيب</button></h3><div class="grid" id="grid"></div></section>
+ </div>
+<div class="rad" id="rad" hidden>
+ <div class="rh"><b>الراديو</b><input id="rq" placeholder="ابحث عن محطة" style="flex:1;max-width:260px"><button id="rx" aria-label="إغلاق">✕</button></div>
+ <div class="chips" id="chips"></div>
+ <div class="form" id="radd" hidden><input id="an" placeholder="اسم المحطة"><input id="au" placeholder="https://… رابط البث" dir="ltr"><button class="btn" id="aa">أضف</button></div>
+ <div class="rl" id="rl"></div>
+ <div class="rp"><div><b id="rn">اختر محطة</b><div class="hi" id="rs2"></div></div><button class="p" id="rpp" aria-label="تشغيل">▶</button></div>
+</div>
+<div class="rad" id="pry" hidden>
+ <div class="rh"><b>أوقات الصلاة</b><select id="pcs" aria-label="المدينة"></select><button class="btn" id="pgp" style="padding:8px 14px">📍 موقعي</button><button id="px" aria-label="إغلاق">✕</button></div>
+ <div class="pnx"><div><small>الصلاة القادمة</small><b id="pnn">—</b></div><div class="pcd" id="pcd">00:00:00</div></div>
+ <div class="pls" id="pls"></div>
+ <div class="rp" style="font-size:13px"><span class="hi" id="pnote"></span><span class="hi" id="pq"></span></div>
+</div>
+<div class="rad tvp" id="tv" hidden>
+ <div class="tvl">
+  <div class="rh"><b>القنوات</b><input id="tq" placeholder="ابحث" style="flex:1;min-width:0"><button id="tx" aria-label="إغلاق">✕</button></div>
+  <div class="chips" id="tch"></div>
+  <button class="btn" id="td" hidden style="padding:8px 14px">🗑 حذف هذه القائمة</button>
+  <div class="hi" id="tinf" style="font-size:12px"></div><select id="tcs" hidden></select>
+  <div class="form tvf" id="tf" hidden><input id="tn" placeholder="اسم الحساب (اختياري)"><input id="tu" dir="ltr" placeholder="الهوست  host:port" autocapitalize="none" autocomplete="off"><input id="tus" dir="ltr" placeholder="اسم المستخدم" autocapitalize="none" autocomplete="off"><input id="tpw" type="password" dir="ltr" placeholder="كلمة السر" autocomplete="off"><button class="btn" id="ta">تسجيل دخول وحفظ</button></div>
+  <div class="tls" id="tls"></div>
+ </div>
+ <div class="tvv"><video id="vid" playsinline controls></video><div class="tvi"><b id="tvn">اختر قناة</b></div></div>
+</div>
+<div class="rad" id="set" hidden>
+ <div class="rh"><b>الإعدادات</b><button id="sx" aria-label="إغلاق">✕</button></div>
+ <div class="row"><span>الحساب</span><b id="acm" dir="ltr" style="font-size:14px">—</b></div>
+ <div class="row"><span>الاشتراك</span><b id="acl">—</b></div>
+ <div class="row"><span>كود تفعيل</span><span style="display:flex;gap:6px"><input id="rc" dir="ltr" placeholder="XXXX-XXXX-XXXX" style="width:170px"><button class="btn" id="rcb">تفعيل</button></span></div>
+ <div class="row"><span>تسجيل الخروج</span><button class="btn" id="lgo">خروج</button></div>
+ <div class="row"><span>لون التطبيق</span><div class="chips" id="thc"></div></div>
+ <div class="row"><span>المؤثرات ثلاثية الأبعاد</span><button class="btn" id="fxb">مفعّلة</button></div>
+ <div class="row"><span>ترتيب التطبيقات</span><button class="btn" id="rst">إعادة الضبط</button></div>
+</div>
+<div class="rad" id="obd" hidden>
+ <div class="rh"><b>فحص OBD</b><span class="hi" id="ost">وضع تجريبي (بيانات وهمية)</span><button id="ox" aria-label="إغلاق">✕</button></div>
+ <div class="chips" id="oc"><button data-t="0" class="on">مباشر</button><button data-t="1">الأعطال</button><button data-t="2">الرحلات</button></div>
+ <div class="ot on" id="o0">
+  <div class="gz"><svg viewBox="0 0 120 80"><path class="gb2" d="M10 70A50 50 0 0 1 110 70"/><path class="gf" id="gs" d="M10 70A50 50 0 0 1 110 70"/></svg><b id="vs">0</b><small>كم/س</small></div>
+  <div class="gz"><svg viewBox="0 0 120 80"><path class="gb2" d="M10 70A50 50 0 0 1 110 70"/><path class="gf" id="gr" d="M10 70A50 50 0 0 1 110 70"/></svg><b id="vr">0</b><small>دورة/د</small></div>
+  <div class="os"><div><b id="vt">0</b><small>حرارة المحرك °C</small></div><div><b id="vv">0</b><small>جهد البطارية V</small></div><div><b id="vl">0</b><small>حمل المحرك %</small></div><div><b id="vf">0</b><small>الوقود %</small></div></div>
+ </div>
+ <div class="ot ol" id="o1">
+  <div class="form" style="flex:none"><button class="btn" id="osc">🔍 فحص الأعطال</button><button class="btn" id="ocl" style="background:rgba(255,255,255,.1);color:var(--ink);box-shadow:none">🗑 مسح الأعطال</button></div>
+  <div id="dl"></div>
+ </div>
+ <div class="ot ol" id="o2"></div>
+ <div class="rp"><span class="hi">القراءة الحقيقية بعد التغليف مع قطعة ELM327 بلوتوث</span><button class="btn" id="oco">🔌 اتصال بالسيارة</button></div>
+</div>
+</main>
+
+<main class="ui" id="ph">
+ <div class="top"><div><div class="hi">درب</div><div class="clk" style="font-size:40px;font-weight:600">مركبتي</div></div>
+  <div class="seg glass" style="padding:4px"><button id="bc2" aria-pressed="false">شاشة السيارة</button><button id="bp2" aria-pressed="true">الموبايل</button></div></div>
+ <div class="spc"></div>
+ <section class="tab on glass"><div class="veh"><svg class="ring" viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="42"/><circle class="fg" id="rf2" cx="50" cy="50" r="42"/></svg><div><small id="vn2"></small><b id="o2"></b><small>الصيانة بعد <span id="s2"></span> كم</small></div></div>
+  <div class="row"><span>أندرويد أوتو</span><b class="wm" id="cn">غير متصل</b></div><button class="btn" id="sc">ابدأ العرض</button></section>
+ <section class="tab glass"><h3>المركبة</h3>
+  <div class="row"><span>الاسم</span><input id="in"></div><div class="row"><span>العداد (كم)</span><input id="io" type="number" inputmode="numeric"></div><div class="row"><span>الصيانة كل (كم)</span><input id="ie" type="number" inputmode="numeric"></div>
+  <button class="btn" id="sv">حفظ</button></section>
+ <section class="tab glass"><h3>السجل</h3><div class="form"><select id="ty"><option>وقود</option><option>صيانة</option><option>شحن</option><option>مصروف</option></select><input id="am" type="number" inputmode="decimal" placeholder="المبلغ"><button class="btn" id="ad">أضف</button></div><div id="ls"></div></section>
+ <section class="tab glass"><h3>الإعدادات</h3><div class="row"><span>العرض على السيارة</span><b class="ok">مفعّل</b></div><div class="row"><span>مسح السجل</span><button class="btn" id="rs">مسح</button></div></section>
+ <nav class="nav glass" style="padding:6px;border-radius:99px"><button aria-selected="true" data-t="0"><i>🧭</i>الرئيسية</button><button aria-selected="false" data-t="1"><i>🚙</i>المركبة</button><button aria-selected="false" data-t="2"><i>🧾</i>السجل</button><button aria-selected="false" data-t="3"><i>⚙️</i>الإعدادات</button></nav>
+</main>
+<div class="msg" id="msg" role="status"></div>
+
+<div class="gate" id="gate" hidden><div class="gc glass">
+ <div class="gl">🧭</div><h2 id="gt">درب</h2>
+ <div class="chips" id="gtab" style="justify-content:center"><button data-m="login" class="on">تسجيل دخول</button><button data-m="reg">حساب جديد</button></div>
+ <input id="ge" type="email" dir="ltr" placeholder="الإيميل" autocomplete="username" autocapitalize="none">
+ <input id="gp" type="password" dir="ltr" placeholder="كلمة السر" autocomplete="current-password">
+ <div id="gx" hidden><p class="hi">أدخل كود التفعيل اللي اشتريته لتمديد الاشتراك</p><input id="gc2" dir="ltr" placeholder="XXXX-XXXX-XXXX" style="margin-top:8px" autocapitalize="characters"></div>
+ <p class="gm" id="gm"></p>
+ <button class="btn" id="gb" style="width:100%">دخول</button>
+ <button id="glo" hidden style="color:var(--mute)">تسجيل خروج</button>
+ <button id="gpv" hidden style="color:var(--mute);font-size:13px">معاينة بدون سيرفر</button>
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.8/hls.min.js"></script>
+<script>
+var $=function(i){return document.getElementById(i)},Q=function(s){return document.querySelectorAll(s)};
+var D={name:"سيارتي",odo:14000,every:10000,last:10000,log:[],fav:[],my:[],pc:0,ploc:null,pl:[],ord:[],th:0,fx:1,tr:[]};
+try{var s=localStorage.getItem("darb3");if(s)D=Object.assign(D,JSON.parse(s))}catch(e){}
+function save(){try{localStorage.setItem("darb3",JSON.stringify(D))}catch(e){}}
+var apps=[["▶️","يوتيوب","#ef4444,#f97316"],["📺","القنوات","#06b6d4,#3b82f6"],["📻","الراديو","#10b981,#22d3ee"],["🎬","IPTV","#8b5cf6,#ec4899"],["🗺️","الخرائط","#22c55e,#14b8a6"],["🌐","المتصفح","#3b82f6,#8b5cf6"],["🕌","الصلاة","#f59e0b,#eab308"],["🔧","فحص OBD","#64748b,#94a3b8"]];
+$("grid").innerHTML=apps.map(function(a,i){return '<button class="tile" style="--i:'+i+';--g:linear-gradient(135deg,'+a[2]+')" data-n="'+a[1]+'"><i>'+a[0]+'</i>'+a[1]+'</button>'}).join("");
+$("grid").onclick=function(e){var t=e.target.closest(".tile");if(!t)return;if(ed){tswap(t.dataset.n);return}if(t.dataset.n=="الراديو")openRad();else if(t.dataset.n=="الصلاة")openPry();else if(t.dataset.n=="القنوات")openTv("ch");else if(t.dataset.n=="IPTV")openTv("iptv");else if(t.dataset.n=="فحص OBD")openObd();else launch(t.dataset.n)};
+$("grid").onpointermove=function(e){var t=e.target.closest(".tile");if(!t)return;var r=t.getBoundingClientRect();t.style.setProperty("--ry",((e.clientX-r.left)/r.width-.5)*28+"deg");t.style.setProperty("--rx",-((e.clientY-r.top)/r.height-.5)*28+"deg")};
+$("grid").onpointerleave=function(){Q(".tile").forEach(function(t){t.style.setProperty("--rx","0deg");t.style.setProperty("--ry","0deg")})};
+var tm;function toast(t){var m=$("msg");m.textContent=t;m.classList.add("show");clearTimeout(tm);tm=setTimeout(function(){m.classList.remove("show")},1800)}
+var G="";function tick(){var d=new Date(),h=d.getHours();$("clk").textContent=("0"+h).slice(-2)+":"+("0"+d.getMinutes()).slice(-2);G=h<12?"صباح الخير":h<18?"نهارك سعيد":"مساء الخير";try{pUpd()}catch(e){}}
+tick();setInterval(tick,20000);
+function render(){var left=Math.max(0,D.last+D.every-D.odo),pct=Math.min(1,Math.max(0,(D.odo-D.last)/D.every)),off=264*pct;
+ ["vn","vn2"].forEach(function(i){$(i).textContent=D.name});$("svc").textContent=$("s2").textContent=left.toLocaleString("en");
+ $("odo").textContent=D.odo.toLocaleString("en");$("o2").textContent=D.odo.toLocaleString("en")+" كم";
+ setTimeout(function(){$("rf").style.strokeDashoffset=off;$("rf2").style.strokeDashoffset=off;$("rf2").style.stroke="#22d3ee"},60);
+ $("in").value=D.name;$("io").value=D.odo;$("ie").value=D.every;
+ $("ls").innerHTML=D.log.length?D.log.map(function(l){return '<div class="row"><span>'+l.t+'<br><small>'+l.d+'</small></span><b>'+l.a+'</b></div>'}).join(""):'<div class="empty">ما في سجل بعد. أضف أول بند.</div>'}
+render();
+$("ad").onclick=function(){var a=parseFloat($("am").value);if(!a){toast("اكتب المبلغ أولاً");return}D.log.unshift({t:$("ty").value,a:a.toFixed(2),d:new Date().toLocaleDateString("ar-JO")});$("am").value="";save();render();toast("تمت الإضافة")};
+$("sv").onclick=function(){D.name=$("in").value||"سيارتي";D.odo=+$("io").value||0;D.every=+$("ie").value||10000;save();render();toast("تم الحفظ")};
+$("rs").onclick=function(){D.log=[];save();render();toast("تم المسح")};
+$("sc").onclick=function(){$("cn").textContent="جاري الاتصال…";setTimeout(function(){$("cn").textContent="جاهز";toast("يتفعّل بعد التغليف")},900)};
+/* ===== الراديو ===== */
+var A=new Audio(),RS=[],cur=null,cat="",ini=0,msg="";
+var CT=[["fav","⭐ المفضلة"],["jo","الأردن"],["quran","القرآن"],["news","أخبار"],["ar","عربي"],["my","روابطي"]],QS={jo:"countrycode=JO",quran:"tag=quran&language=arabic",news:"tag=news&language=arabic",ar:"language=arabic"},HS=["de1","nl1","at1"],GR=["#ef4444,#f97316","#06b6d4,#3b82f6","#10b981,#22d3ee","#8b5cf6,#ec4899","#f59e0b,#eab308","#3b82f6,#8b5cf6"];
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function api(q,i){i=i||0;return fetch("https://"+HS[i]+".api.radio-browser.info/json/stations/search?"+q+"&hidebroken=true&is_https=true&order=votes&reverse=true&limit=80").then(function(r){if(!r.ok)throw 0;return r.json()}).catch(function(e){if(i<HS.length-1)return api(q,i+1);throw e})}
+function isFav(s){return D.fav.some(function(f){return f.u==s.u})}
+function mark(){Q(".st").forEach(function(e){e.classList.toggle("on",!!cur&&e.dataset.u==encodeURIComponent(cur.u))})}
+function draw(){var q=($("rq").value||"").trim().toLowerCase(),L=RS.filter(function(s){return !q||s.n.toLowerCase().indexOf(q)>-1});
+ $("rl").innerHTML=L.length?L.map(function(s,i){return '<div class="st" role="button" tabindex="0" data-u="'+encodeURIComponent(s.u)+'"><i style="--g:linear-gradient(135deg,'+GR[i%6]+')">'+esc(s.n.charAt(0)||"♪")+'</i><span>'+esc(s.n)+'<small>'+esc(s.t||"بث مباشر")+'</small></span><button class="fv" data-f="'+encodeURIComponent(s.u)+'" aria-label="مفضلة">'+(isFav(s)?"★":"☆")+'</button></div>'}).join(""):'<div class="empty">'+msg+'</div>';mark()}
+function load(c){cat=c;Q("#chips button").forEach(function(b){b.classList.toggle("on",b.dataset.c==c)});$("radd").hidden=c!="my";
+ if(c=="fav"){RS=D.fav;msg="ما في مفضلة بعد. اضغط ☆ على أي محطة.";draw();return}
+ if(c=="my"){RS=D.my;msg="أضف رابط بث مباشر https من الأعلى.";draw();return}
+ RS=[];msg="جاري التحميل…";draw();
+ api(QS[c]).then(function(a){if(cat!=c)return;RS=a.filter(function(x){return !x.hls&&x.url_resolved}).map(function(x){return{n:(x.name||"").trim(),u:x.url_resolved,t:(x.tags||"").split(",")[0]}}).filter(function(s,i,ar){return s.n&&ar.findIndex(function(z){return z.n==s.n})==i});msg="ما في نتائج";draw()}).catch(function(){if(cat!=c)return;msg="تعذّر تحميل المحطات. تأكد من الاتصال بالإنترنت. (الميزة بتشتغل بعد النشر على سيرفرك، مش داخل المعاينة)";draw()})}
+function play(s){cur=s;A.src=s.u;A.play().catch(function(){toast("تعذّر تشغيل المحطة")});$("rn").textContent=$("npn").textContent=s.n;$("rs2").textContent=$("nps").textContent=s.t||"بث مباشر";mark();
+ if("mediaSession" in navigator){try{navigator.mediaSession.metadata=new MediaMetadata({title:s.n,artist:"درب"});navigator.mediaSession.setActionHandler("play",function(){A.play()});navigator.mediaSession.setActionHandler("pause",function(){A.pause()})}catch(e){}}}
+function tg(){if(!cur){openRad();return}if(A.paused)A.play().catch(function(){});else A.pause()}
+A.onplaying=function(){$("np").classList.add("play");$("pp").textContent=$("rpp").textContent="⏸"};
+A.onpause=function(){$("np").classList.remove("play");$("pp").textContent=$("rpp").textContent="▶"};
+A.onerror=function(){toast("انقطع البث")};
+function openRad(){$("rad").hidden=false;if(!ini){ini=1;$("chips").innerHTML=CT.map(function(c){return '<button data-c="'+c[0]+'">'+c[1]+'</button>'}).join("");load(D.fav.length?"fav":"jo")}}
+function find(u){var a=RS.concat(D.fav,D.my);for(var i=0;i<a.length;i++)if(encodeURIComponent(a[i].u)==u)return a[i]}
+$("chips").onclick=function(e){var b=e.target.closest("button");if(b)load(b.dataset.c)};
+$("rq").oninput=draw;
+$("rl").onclick=function(e){var f=e.target.closest(".fv");if(f){var s=find(f.dataset.f);if(!s)return;if(isFav(s))D.fav=D.fav.filter(function(x){return x.u!=s.u});else D.fav.unshift({n:s.n,u:s.u,t:s.t});save();if(cat=="fav")RS=D.fav;draw();return}var t=e.target.closest(".st");if(t){var s2=find(t.dataset.u);if(s2)play(s2)}};
+$("rl").onkeydown=function(e){if(e.key=="Enter"&&e.target.classList.contains("st"))e.target.click()};
+$("rx").onclick=function(){$("rad").hidden=true};
+$("aa").onclick=function(){var n=$("an").value.trim(),u=$("au").value.trim();if(!n||u.indexOf("https://")!=0){toast("اكتب الاسم ورابط يبدأ بـ https");return}D.my.unshift({n:n,u:u,t:"رابط خاص"});save();$("an").value=$("au").value="";RS=D.my;draw();toast("تمت الإضافة")};
+$("pp").onclick=tg;$("rpp").onclick=tg;
+/* ===== أوقات الصلاة (حساب داخلي بدون إنترنت) ===== */
+var PN=[["الفجر"],["الشروق"],["الظهر"],["العصر"],["المغرب"],["العشاء"]];
+var CI=[["عمّان",31.9454,35.9284],["إربد",32.5556,35.8469],["الزرقاء",32.0728,36.0876],["العقبة",29.5321,35.0063],["السلط",32.0392,35.7272],["الكرك",31.1853,35.7048],["المفرق",32.3406,36.208],["مادبا",31.716,35.7939],["جرش",32.2747,35.8961],["معان",30.1943,35.734]];
+function loc(){return D.ploc||{n:CI[D.pc][0],a:CI[D.pc][1],o:CI[D.pc][2]}}
+function calc(b,la,lo){var R=Math.PI/180,tz=-b.getTimezoneOffset()/60,d=Date.UTC(b.getFullYear(),b.getMonth(),b.getDate())/864e5-10957;
+ var g=(357.529+.98560028*d)%360,q=(280.459+.98564736*d)%360,L=(q+1.915*Math.sin(g*R)+.02*Math.sin(2*g*R))%360,e=23.439-3.6e-7*d;
+ var ra=Math.atan2(Math.cos(e*R)*Math.sin(L*R),Math.cos(L*R))/R/15;ra=(ra%24+24)%24;
+ var dc=Math.asin(Math.sin(e*R)*Math.sin(L*R))/R,eq=q/15-ra;eq=((eq+12)%24+24)%24-12;
+ var dh=12+tz-lo/15-eq;
+ function T(a){var x=(-Math.sin(a*R)-Math.sin(la*R)*Math.sin(dc*R))/(Math.cos(la*R)*Math.cos(dc*R));x=Math.max(-1,Math.min(1,x));return Math.acos(x)/R/15}
+ var as=-Math.atan(1/(1+Math.tan(Math.abs(la-dc)*R)))/R;
+ return [dh-T(18),dh-T(.833),dh,dh+T(as),dh+T(.833),dh+T(18)].map(function(h){return new Date(b.getTime()+Math.round(h*60)*6e4)})}
+function qib(la,lo){var R=Math.PI/180,p=la*R,k=21.4225*R,dl=(39.8262-lo)*R;return(Math.atan2(Math.sin(dl),Math.cos(p)*Math.tan(k)-Math.sin(p)*Math.cos(dl))/R+360)%360}
+function day(o){var n=new Date(),l=loc();return calc(new Date(n.getFullYear(),n.getMonth(),n.getDate()+o),l.a,l.o)}
+function nextP(){var n=new Date(),T=day(0),ix=[0,2,3,4,5];for(var i=0;i<5;i++)if(T[ix[i]]>n)return{i:ix[i],t:T[ix[i]]};return{i:0,t:day(1)[0]}}
+function hm(d){var h=d.getHours();return{t:((h%12)||12)+":"+("0"+d.getMinutes()).slice(-2),a:h<12?"ص":"م"}}
+function cd(ms){var s=Math.max(0,Math.floor(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return("0"+h).slice(-2)+":"+("0"+m).slice(-2)+":"+("0"+(s%60)).slice(-2)}
+function pUpd(){var n=nextP(),ms=n.t-new Date();$("hi").textContent=G+" · "+PN[n.i][0]+" بعد "+cd(ms).slice(0,5);
+ if(!$("pry").hidden){$("pnn").textContent=PN[n.i][0];$("pcd").textContent=cd(ms);Q(".pc").forEach(function(e,i){e.classList.toggle("n",i==n.i)})}}
+function drawP(){var T=day(0),l=loc();$("pls").innerHTML=PN.map(function(p,i){var x=hm(T[i]);return'<div class="pc"><small>'+p[0]+'</small><b>'+x.t+'</b><small>'+x.a+'</small></div>'}).join("");
+ $("pq").textContent="القبلة "+Math.round(qib(l.a,l.o))+"° من الشمال";$("pnote").textContent=l.n+" · الفجر والعشاء 18° · تقديري";$("pcs").value=D.ploc?"":D.pc;pUpd()}
+function openPry(){$("pry").hidden=false;drawP()}
+$("pcs").innerHTML=CI.map(function(c,i){return'<option value="'+i+'">'+c[0]+'</option>'}).join("");
+$("pcs").onchange=function(){D.pc=+this.value;D.ploc=null;save();drawP()};
+$("px").onclick=function(){$("pry").hidden=true};
+$("pgp").onclick=function(){if(!navigator.geolocation){toast("الموقع غير مدعوم");return}navigator.geolocation.getCurrentPosition(function(p){D.ploc={n:"موقعي",a:p.coords.latitude,o:p.coords.longitude};save();drawP();toast("تم تحديد موقعك")},function(){toast("تعذّر تحديد الموقع")},{timeout:8000})};
+pUpd();setInterval(pUpd,1000);
+/* ===== القنوات وIPTV ===== */
+var TV={cat:"",L:[],msg:"",h:null,ini:0,hid:0,cur:""};
+var TP=[["jo","الأردن","https://iptv-org.github.io/iptv/countries/jo.m3u"],["ar","عربي","https://iptv-org.github.io/iptv/languages/ara.m3u"]];
+function pm3u(t){var o=[],a=t.split(/\r?\n/),x=null;for(var i=0;i<a.length;i++){var l=a[i].trim();if(l.indexOf("#EXTINF")==0){var c=l.lastIndexOf(",");x={n:(c>-1?l.slice(c+1):"").trim(),g:(l.match(/group-title="([^"]*)"/)||[])[1]||""}}else if(x&&/^https?:\/\//.test(l)){x.u=l;if(x.n)o.push(x);x=null}}return o}
+function tvChips(){$("tch").innerHTML=TP.map(function(p,i){return'<button data-k="p'+i+'">'+p[1]+'</button>'}).concat(D.pl.map(function(p,i){return'<button data-k="u'+i+'">'+esc(p.n)+'</button>'})).concat(['<button data-k="add">＋ حساب IPTV</button>']).join("")}
+function tvIn(a){var s=a.filter(function(x){return x.u.indexOf("https://")==0});TV.hid=a.length-s.length;TV.L=s;TV.msg=a.length?"كل القنوات بروابط http غير آمنة ولا تشتغل بالمتصفح":"القائمة فاضية";tvDraw()}
+function tvFetch(u,k){TV.L=[];TV.hid=0;TV.msg="جاري التحميل…";tvDraw();fetch(u).then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(t){if(TV.cat==k)tvIn(pm3u(t))}).catch(function(){if(TV.cat!=k)return;TV.msg="تعذّر تحميل القائمة. (الميزة بتشتغل بعد النشر على سيرفرك، مش داخل المعاينة)";tvDraw()})}
+function tvSet(k){TV.cat=k;Q("#tch button").forEach(function(b){b.classList.toggle("on",b.dataset.k==k)});$("tf").hidden=k!="add";$("td").hidden=k[0]!="u";$("tcs").hidden=true;$("tinf").textContent="";TV.cf="";
+ if(k=="add"){TV.L=[];TV.hid=0;TV.msg="سجّل دخول بالهوست واسم المستخدم وكلمة السر.";tvDraw();return}
+ if(k[0]=="u"){var p=D.pl[+k.slice(1)];if(p.h){xl(p,k);return}if(p.t)tvIn(pm3u(p.t));else tvFetch(p.u,k);return}
+ tvFetch(TP[+k.slice(1)][2],k)}
+function tvMark(){Q("#tls .st").forEach(function(e){e.classList.toggle("on",!!TV.cur&&e.dataset.u==encodeURIComponent(TV.cur))})}
+function tvDraw(){var q=($("tq").value||"").trim().toLowerCase(),L=TV.L.filter(function(s){return(!q||s.n.toLowerCase().indexOf(q)>-1)&&(!TV.cf||s.g==TV.cf)}),M=L.slice(0,300);
+ $("tls").innerHTML=M.length?M.map(function(s,i){return'<div class="st" role="button" tabindex="0" data-u="'+encodeURIComponent(s.u)+'"><i style="--g:linear-gradient(135deg,'+GR[i%6]+')">'+esc(s.n.charAt(0))+'</i><span>'+esc(s.n)+'<small>'+esc(s.g||"قناة")+'</small></span></div>'}).join("")+(L.length>300?'<div class="empty">عرض أول 300 — استخدم البحث</div>':"")+(TV.hid?'<div class="empty">أُخفيت '+TV.hid+' قناة بروابط http</div>':""):'<div class="empty">'+TV.msg+'</div>';tvMark()}
+function tvStop(){var v=$("vid");if(TV.h){TV.h.destroy();TV.h=null}v.pause();v.removeAttribute("src");v.load()}
+function tvPlay(s){var v=$("vid");try{A.pause()}catch(e){}tvStop();$("tvn").textContent=s.n;TV.cur=s.u;
+ if(window.Hls&&Hls.isSupported()&&/\.m3u8/i.test(s.u)){var h=new Hls();TV.h=h;h.loadSource(s.u);h.attachMedia(v);h.on(Hls.Events.MANIFEST_PARSED,function(){v.play().catch(function(){})});h.on(Hls.Events.ERROR,function(e,d){if(d.fatal){toast("القناة غير متاحة");h.destroy();TV.h=null}})}
+ else{v.src=s.u;v.play().catch(function(){toast("تعذّر تشغيل القناة")})}
+ tvMark()}
+function openTv(m){$("tv").hidden=false;if(!TV.ini){TV.ini=1;tvChips()}tvSet(m=="iptv"?(D.pl.length?"u0":"add"):"p0")}
+$("tch").onclick=function(e){var b=e.target.closest("button");if(b)tvSet(b.dataset.k)};
+$("tq").oninput=tvDraw;
+$("tls").onclick=function(e){var t=e.target.closest(".st");if(!t)return;for(var i=0;i<TV.L.length;i++)if(encodeURIComponent(TV.L[i].u)==t.dataset.u){tvPlay(TV.L[i]);break}};
+$("tls").onkeydown=function(e){if(e.key=="Enter"&&e.target.classList.contains("st"))e.target.click()};
+$("tx").onclick=function(){tvStop();$("tv").hidden=true};
+$("ta").onclick=function(){var n=$("tn").value.trim(),u=$("tu").value.trim(),t=$("tt").value.trim();if(!n||(!u&&!t)){toast("اكتب الاسم والرابط أو المحتوى");return}if(!t&&u.indexOf("https://")!=0){toast("الرابط لازم يبدأ بـ https");return}
+ D.pl.push(t?{n:n,t:t}:{n:n,u:u});save();$("tn").value=$("tu").value=$("tt").value="";tvChips();tvSet("u"+(D.pl.length-1));toast("تمت الإضافة")};
+function xb(h){h=h.trim().replace(/\/+$/,"");if(!/^https?:\/\//i.test(h))h="http://"+h;return h}
+function xf(u){if(window.DarbNative&&DarbNative.get)return DarbNative.get(u).then(JSON.parse);if(location.protocol=="https:"&&u.indexOf("http://")==0)return Promise.reject("mixed");return fetch(u).then(function(r){if(!r.ok)throw 0;return r.json()})}
+function xl(p,k){TV.L=[];TV.hid=0;TV.msg="جاري تسجيل الدخول…";tvDraw();var b=xb(p.h),q=b+"/player_api.php?username="+encodeURIComponent(p.us)+"&password="+encodeURIComponent(p.pw);
+ xf(q).then(function(i){if(!i||!i.user_info||+i.user_info.auth!=1)throw"auth";if(TV.cat!=k)return;var u=i.user_info,e=u.exp_date?new Date(u.exp_date*1000).toLocaleDateString("ar-JO"):"غير محدود";
+  $("tinf").textContent="الحساب: "+(u.status=="Active"?"فعّال":u.status)+" · ينتهي "+e+" · اتصالات "+(u.active_cons||0)+"/"+(u.max_connections||"؟");
+  return Promise.all([xf(q+"&action=get_live_categories"),xf(q+"&action=get_live_streams")]).then(function(r){if(TV.cat!=k)return;var cm={};(r[0]||[]).forEach(function(c){cm[c.category_id]=c.category_name});
+   TV.L=(r[1]||[]).map(function(s){return{n:String(s.name||"").trim(),g:cm[s.category_id]||"",u:b+"/live/"+encodeURIComponent(p.us)+"/"+encodeURIComponent(p.pw)+"/"+s.stream_id+".m3u8"}}).filter(function(s){return s.n});
+   var gs=[];TV.L.forEach(function(s){if(s.g&&gs.indexOf(s.g)<0)gs.push(s.g)});$("tcs").innerHTML='<option value="">كل التصنيفات</option>'+gs.map(function(g){return'<option>'+esc(g)+'</option>'}).join("");$("tcs").hidden=!gs.length;TV.msg="ما في قنوات";tvDraw()})})
+ .catch(function(e){if(TV.cat!=k)return;TV.msg=e=="auth"?"بيانات الدخول غلط أو الاشتراك منتهي.":e=="mixed"?"السيرفر بيستخدم http والصفحة https، فالمتصفح بيمنع الاتصال. هالنوع بيشتغل بعد التغليف بالتطبيق.":"تعذّر الاتصال بالسيرفر. غالباً السيرفر ما بيسمح للمتصفح (CORS)، وبيشتغل بعد التغليف.";tvDraw()})}
+$("tcs").onchange=function(){TV.cf=this.value;tvDraw()};
+/* ===== ترتيب التطبيقات والإعدادات ===== */
+var ed=0,sel="",PK={"يوتيوب":"com.google.android.youtube","المتصفح":"com.android.chrome","الخرائط":"com.google.android.apps.maps"};
+function launch(nm){var p=PK[nm];if(p&&window.DarbNative&&DarbNative.openApp){DarbNative.openApp(p);return}toast(p?"بيفتح تطبيق "+nm+" بعد التغليف":"سيُفتح: "+nm)}
+function ordNames(){var n=apps.map(function(a){return a[1]});return D.ord.length==n.length&&n.every(function(x){return D.ord.indexOf(x)>-1})?D.ord:n}
+function renderGrid(){var o=ordNames();$("grid").innerHTML=o.map(function(nm,i){var a=apps.filter(function(x){return x[1]==nm})[0];return'<button class="tile'+(sel==nm?' sel':'')+'" style="--i:'+i+';--g:linear-gradient(135deg,'+a[2]+')" data-n="'+a[1]+'"><i>'+a[0]+'</i>'+a[1]+'</button>'}).join("");$("grid").classList.toggle("ed",!!ed)}
+function tswap(nm){if(!sel||sel==nm){sel=sel==nm?"":nm;renderGrid();return}var o=ordNames().slice(),i=o.indexOf(sel),j=o.indexOf(nm);o[i]=nm;o[j]=sel;D.ord=o;sel="";save();renderGrid()}
+$("ted").onclick=function(){ed=!ed;sel="";this.textContent=ed?"✓ تم":"✎ ترتيب";renderGrid()};
+var TH=[["سماوي","#22d3ee","#8b5cf6"],["أخضر","#34d399","#22d3ee"],["برتقالي","#fb923c","#f43f5e"],["وردي","#f472b6","#8b5cf6"]];
+function applyTh(){var t=TH[D.th]||TH[0],s=document.documentElement.style;s.setProperty("--cy",t[1]);s.setProperty("--vi",t[2]);if(window.fxSet)fxSet(t[1],t[2]);window.FXOFF=!D.fx;if(window.fxOn)fxOn(!!D.fx);$("fxb").textContent=D.fx?"مفعّلة":"متوقفة";Q("#thc button").forEach(function(b,i){b.classList.toggle("on",i==D.th)})}
+$("thc").innerHTML=TH.map(function(t,i){return'<button data-i="'+i+'" style="border-right:6px solid '+t[1]+'">'+t[0]+'</button>'}).join("");
+$("thc").onclick=function(e){var b=e.target.closest("button");if(b){D.th=+b.dataset.i;save();applyTh()}};
+$("fxb").onclick=function(){D.fx=D.fx?0:1;save();applyTh()};
+$("rst").onclick=function(){D.ord=[];save();renderGrid();toast("تمت إعادة الترتيب")};
+$("gs").onclick=function(){$("set").hidden=false};$("sx").onclick=function(){$("set").hidden=true};
+/* ===== OBD والرحلات: واجهة + بيانات تجريبية (الربط الحقيقي بعد التغليف عبر DarbNative) ===== */
+var O={s:0,r:800,t:60,v:12.6,l:15,f:62},demo=!(window.DarbNative&&DarbNative.obdConnect),odt=null,tg0=40,clr=0;
+var DT={P0171:"خليط الوقود فقير (بنك 1)",P0172:"خليط الوقود غني (بنك 1)",P0300:"احتراق خاطئ عشوائي",P0301:"احتراق خاطئ بالأسطوانة 1",P0302:"احتراق خاطئ بالأسطوانة 2",P0303:"احتراق خاطئ بالأسطوانة 3",P0304:"احتراق خاطئ بالأسطوانة 4",P0420:"كفاءة المحوّل الحفّاز منخفضة",P0442:"تسرّب صغير في نظام التبخّر",P0128:"حرارة المبرّد أقل من المطلوب (الثرموستات)",P0335:"حسّاس عمود المرفق",P0401:"تدفّق EGR غير كافٍ",P0507:"دوران الخمول أعلى من المتوقّع"};
+var SMP=[{d:"اليوم 08:15",km:12.4,min:26,avg:29},{d:"أمس 17:40",km:8.1,min:19,avg:26},{d:"أمس 07:55",km:11.9,min:24,avg:30},{d:"قبل يومين 14:05",km:43.5,min:41,avg:64}];
+function arc(id,p){$(id).style.strokeDashoffset=157*(1-Math.max(0,Math.min(1,p)))}
+function oUI(){arc("gs",O.s/220);arc("gr",O.r/8000);$("vs").textContent=Math.round(O.s);$("vr").textContent=Math.round(O.r);$("vt").textContent=Math.round(O.t);$("vv").textContent=(+O.v).toFixed(1);$("vl").textContent=Math.round(O.l);$("vf").textContent=Math.round(O.f)}
+function sim(){if(!demo)return;if(Math.random()<.08)tg0=Math.random()*110;O.s+=(tg0-O.s)*.12;O.r=800+O.s*38+Math.random()*60;O.t=Math.min(92,O.t+.3);O.v=13.7+Math.random()*.4;O.l=10+O.s*.5+Math.random()*4;O.f=Math.max(5,O.f-.01);oUI()}
+function drawDtc(a){$("dl").innerHTML=a&&a.length?a.map(function(c){return'<div class="row"><span><b>'+esc(c)+'</b><br><small>'+esc(DT[c]||"رمز غير معروف — ابحث عنه باسم السيارة")+'</small></span><b class="wm">⚠</b></div>'}).join(""):'<div class="empty ok">ما في أعطال مخزّنة ✓</div>'}
+function drawTr(){var L=D.tr.length?D.tr:SMP,km=L.reduce(function(s,t){return s+t.km},0);$("o2").innerHTML='<div class="row" style="flex:none"><span><b>'+L.length+' رحلات</b><br><small>'+(D.tr.length?"مجموع المسافة":"أمثلة تجريبية — ستتسجّل تلقائياً بالتغليف")+'</small></span><b>'+km.toFixed(1)+' كم</b></div>'+L.map(function(t){return'<div class="row"><span>'+esc(t.d)+'<br><small>'+t.min+' دقيقة · معدل '+t.avg+' كم/س</small></span><b>'+t.km+' كم</b></div>'}).join("")}
+window.onObd=function(d){Object.assign(O,d);oUI()};window.onDtc=drawDtc;window.onObdStatus=function(t){$("ost").textContent=t};
+window.onTrip=function(t){D.tr.unshift(t);D.tr=D.tr.slice(0,200);save();drawTr()};
+/* ===== الحسابات والترخيص (Supabase) ===== */
+var PREVIEW=false,SB={url:"https://pncbdqziuigvbhahngpb.supabase.co",key:"sb_publishable_6-ZQnHAFl0eMpXvLk96G-Q_ycQxRgat"},AU=null,LC=null,gm="login",lastChk=0;
+var GE={bad_credentials:"الإيميل أو كلمة السر غلط",invalid_credentials:"الإيميل أو كلمة السر غلط",email_exists:"هالإيميل مسجّل مسبقاً",bad_email:"الإيميل غير صحيح",bad_password:"كلمة السر لازم 6 أحرف على الأقل",device_limit:"الحساب مربوط بجهاز ثاني. اطلب من الإدارة فك الربط",device_used:"هذا الجهاز استخدم فترة تجريبية سابقاً. سجّل الدخول بحسابك",no_license:"الحساب غير مفعّل، تواصل مع الإدارة",suspended:"هالحساب موقوف",too_many_requests:"محاولات كثيرة، انتظر شوي",over_request_rate_limit:"محاولات كثيرة، انتظر شوي",maintenance:"التطبيق تحت الصيانة حالياً",bad_code:"الكود غير صحيح أو مستخدم",no_device:"تعذّر تحديد الجهاز"};
+function ls(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k)||"null");if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
+AU=ls("darb_auth");LC=ls("darb_lic");
+function devId(){if(window.DarbNative&&DarbNative.deviceId)try{return String(DarbNative.deviceId())}catch(e){}var d=ls("darb_dev");if(!d){d="w"+Math.random().toString(36).slice(2)+Date.now().toString(36);ls("darb_dev",d)}return d}
+function sbf(p,o){return fetch(SB.url+p,o).then(function(r){return r.json().catch(function(){return{}}).then(function(d){if(!r.ok){d=d||{};d.status=r.status;throw d}return d})})}
+function ec(e){if(!e||e.status===undefined)return"";if(e.message&&/^[a-z_]+$/.test(e.message))return e.message;return e.error_code||e.error||"unknown"}
+function jh(x){var h={"Content-Type":"application/json",apikey:SB.key};if(x)h.Authorization="Bearer "+x;return h}
+function setAU(d,em){AU={access:d.access_token,refresh:d.refresh_token,exp:Date.now()+(d.expires_in||3600)*1e3,email:em||(d.user&&d.user.email)||""};ls("darb_auth",AU)}
+function tokenOk(force){if(!AU)return Promise.reject({status:401,error:"unauthorized"});if(!force&&AU.exp>Date.now()+6e4)return Promise.resolve(AU.access);
+ return sbf("/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:jh(),body:JSON.stringify({refresh_token:AU.refresh})}).then(function(d){setAU(d,AU.email);return AU.access})}
+function rpc(n,a,retry){return tokenOk(retry).then(function(t){return sbf("/rest/v1/rpc/"+n,{method:"POST",headers:jh(t),body:JSON.stringify(a||{})})}).catch(function(e){if(e&&e.status==401&&!retry)return rpc(n,a,1);throw e})}
+function lic(){return rpc("check_license",{p_device:devId(),p_name:navigator.userAgent.slice(0,50)})}
+function doLogin(em,pw){return sbf("/auth/v1/token?grant_type=password",{method:"POST",headers:jh(),body:JSON.stringify({email:em,password:pw})}).then(function(d){setAU(d,em);return lic()}).then(applyLic)}
+function doReg(em,pw){return sbf("/functions/v1/register",{method:"POST",headers:jh(),body:JSON.stringify({email:em,password:pw,device:devId()})}).then(function(){return doLogin(em,pw)})}
+function emsg(e){return GE[ec(e)]||(e&&e.status===undefined?"تعذّر الاتصال بالسيرفر":"حدث خطأ")}
+function gshow(m,t){gm=m;$("gate").hidden=false;var inp=m=="login"||m=="reg",ex=m=="expired";$("gtab").hidden=$("ge").hidden=$("gp").hidden=!inp;$("gx").hidden=!ex;$("gb").hidden=m=="block";
+ Q("#gtab button").forEach(function(b){b.classList.toggle("on",b.dataset.m==m)});$("gb").textContent={login:"دخول",reg:"إنشاء حساب",expired:"تفعيل الكود",retry:"إعادة المحاولة"}[m]||"";
+ $("gt").textContent=ex?"انتهى اشتراكك":m=="block"?"التطبيق متوقف":"درب";$("gm").textContent=t||"";$("gpv").hidden=!PREVIEW||!inp;$("glo").hidden=!(AU&&!inp)}
+function logoutA(){AU=null;ls("darb_auth",null);ls("darb_lic",null);$("acm").textContent=$("acl").textContent="—";gshow("login","")}
+function applyLic(l){ls("darb_lic",{l:l,at:Date.now()});LC={l:l,at:Date.now()};lastChk=Date.now();
+ if(l.maintenance)return gshow("block",l.announcement||GE.maintenance);
+ if(l.status=="suspended")return gshow("block",GE.suspended);
+ $("acm").textContent=AU?AU.email:"—";$("acl").textContent=(l.paid?"مشترك":"تجريبي")+" · باقي "+l.days_left+" يوم";
+ if(l.status=="expired")return gshow("expired","انتهت الفترة. أدخل كود التفعيل للمتابعة");
+ $("gate").hidden=true;if(l.announcement&&D.ann!=l.announcement){D.ann=l.announcement;save();toast(l.announcement)}}
+function chk(){if(!AU)return;lic().then(applyLic).catch(function(e){
+ if(e&&e.status!==undefined&&e.status<500){var c=ec(e);
+  if(c=="device_limit"||c=="no_license"){AU=null;ls("darb_auth",null);ls("darb_lic",null);gshow("login",GE[c]);return}
+  AU=null;ls("darb_auth",null);gshow("login","سجّل الدخول من جديد");return}
+ var c2=LC,t=Date.now();if(c2&&c2.l.status=="active"&&!c2.l.maintenance&&c2.l.expires>t&&t>=c2.at-3e5&&t-c2.at<c2.l.offline_hours*36e5){$("gate").hidden=true;$("acl").textContent="بدون اتصال · آخر تحقق "+new Date(c2.at).toLocaleTimeString("ar-JO",{hour:"2-digit",minute:"2-digit"})}
+ else gshow("retry","لازم اتصال بالإنترنت للتحقق من الاشتراك")})}
+function redeem(c,fromSet){if(!c||!c.trim()){toast("اكتب الكود");return}rpc("redeem_code",{p_code:c}).then(function(d){if(d.error)throw{status:200,message:d.error};applyLic(d.license);$("rc").value=$("gc2").value="";toast("تم التفعيل ✓")}).catch(function(e){var m=emsg(e);if(fromSet)toast(m);else $("gm").textContent=m})}
+$("gtab").onclick=function(e){var b=e.target.closest("button");if(b)gshow(b.dataset.m,"")};
+$("gb").onclick=function(){var b=this;if(gm=="retry"){chk();return}if(gm=="expired"){redeem($("gc2").value);return}
+ var em=$("ge").value.trim().toLowerCase(),pw=$("gp").value;if(!em||!pw){$("gm").textContent="اكتب الإيميل وكلمة السر";return}
+ b.disabled=true;$("gm").textContent="";(gm=="reg"?doReg(em,pw):doLogin(em,pw)).then(function(){$("gp").value=""}).catch(function(e){var c=ec(e);if(c=="device_limit"||c=="no_license"){AU=null;ls("darb_auth",null)}$("gm").textContent=emsg(e)}).then(function(){b.disabled=false})};
+$("rcb").onclick=function(){redeem($("rc").value,1)};$("lgo").onclick=function(){$("set").hidden=true;logoutA()};$("glo").onclick=logoutA;
+$("gpv").onclick=function(){$("gate").hidden=true};
+document.addEventListener("visibilitychange",function(){if(!document.hidden&&AU&&Date.now()-lastChk>3e5)chk()});setInterval(function(){if(AU)chk()},18e5);
+if(AU)chk();else gshow("login","");
+function openObd(){$("obd").hidden=false;oUI();drawTr();drawDtc(null);clearInterval(odt);odt=setInterval(sim,700)}
+$("ox").onclick=function(){$("obd").hidden=true;clearInterval(odt)};
+$("oc").onclick=function(e){var b=e.target.closest("button");if(!b)return;Q("#oc button").forEach(function(x){x.classList.toggle("on",x==b)});Q(".ot").forEach(function(x,i){x.classList.toggle("on",i==b.dataset.t)})};
+$("oco").onclick=function(){if(window.DarbNative&&DarbNative.obdConnect){$("ost").textContent="جاري الاتصال…";DarbNative.obdConnect()}else toast("الاتصال بالبلوتوث بعد التغليف")};
+$("osc").onclick=function(){if(window.DarbNative&&DarbNative.obdScan){DarbNative.obdScan();return}toast("نتيجة تجريبية");setTimeout(function(){drawDtc(["P0171","P0420"])},700)};
+$("ocl").onclick=function(){var b=this;if(!clr){clr=1;b.textContent="تأكيد المسح؟";setTimeout(function(){clr=0;b.textContent="🗑 مسح الأعطال"},3000);return}clr=0;b.textContent="🗑 مسح الأعطال";if(window.DarbNative&&DarbNative.obdClear)DarbNative.obdClear();else{drawDtc([]);toast("تم المسح (تجريبي)")}};
+renderGrid();applyTh();
+$("ta").onclick=function(){var h=$("tu").value.trim(),us=$("tus").value.trim(),pw=$("tpw").value,n=$("tn").value.trim()||h;if(!h||!us||!pw){toast("اكتب الهوست واسم المستخدم وكلمة السر");return}
+ D.pl.push({n:n,h:h,us:us,pw:pw});save();$("tn").value=$("tu").value=$("tus").value=$("tpw").value="";tvChips();tvSet("u"+(D.pl.length-1));toast("تم حفظ الحساب")};
+$("td").onclick=function(){var i=+TV.cat.slice(1);D.pl.splice(i,1);save();tvChips();tvSet("p0");toast("تم الحذف")};
+Q(".nav button").forEach(function(b){b.onclick=function(){Q(".nav button").forEach(function(x){x.setAttribute("aria-selected",x===b)});Q(".tab").forEach(function(x,i){x.classList.toggle("on",i==b.dataset.t)})}});
+var view="car";
+function show(v){view=v;$("car").classList.toggle("on",v=="car");$("ph").classList.toggle("on",v=="ph");if(location.hash!=="#"+v)location.hash=v;window.scrollTo(0,0);mode()}
+function goFS(){try{if(document.fullscreenElement)return;var e=document.documentElement,p=e.requestFullscreen&&e.requestFullscreen();Promise.resolve(p).then(function(){return screen.orientation.lock("landscape")}).catch(function(){})}catch(x){}}
+$("fs").onclick=function(){if(document.fullscreenElement){document.exitFullscreen()}else goFS()};
+["bc","bc2"].forEach(function(i){$(i).onclick=function(){show("car");goFS()}});["bp","bp2"].forEach(function(i){$(i).onclick=function(){show("ph")}});
+function mode(){var rot=view=="car"&&innerHeight>innerWidth,w=rot?innerHeight:innerWidth,h=rot?innerWidth:innerHeight,c=document.documentElement.classList;c.toggle("rot",rot);c.toggle("L",w>h);var k=h/500,st=document.documentElement.style;st.setProperty("--k",k);st.setProperty("--sw",(w/k)+"px");if(window.rsz)rsz()}
+addEventListener("resize",mode);
+function fh(){show(location.hash=="#ph"?"ph":"car")}addEventListener("hashchange",fh);fh();
+
+/* ===== المشهد ثلاثي الأبعاد ===== */
+if(window.THREE){(function(){
+var R=new THREE.WebGLRenderer({canvas:$("gl"),antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio,2));
+var S=new THREE.Scene();S.fog=new THREE.Fog(0x060a16,10,44);
+var C=new THREE.PerspectiveCamera(42,1,.1,100);
+S.add(new THREE.AmbientLight(0x8090c0,.7));
+var dl=new THREE.DirectionalLight(0xffffff,1.1);dl.position.set(4,8,5);S.add(dl);
+var p1=new THREE.PointLight(0x22d3ee,3,16);p1.position.set(-3,2,3);S.add(p1);
+var p2=new THREE.PointLight(0x8b5cf6,3,16);p2.position.set(3,2,-3);S.add(p2);
+var car=new THREE.Group();S.add(car);
+function M(c,o){return new THREE.MeshStandardMaterial(Object.assign({color:c,metalness:.75,roughness:.28},o||{}))}
+function B(w,h,d,m,x,y,z,g){var b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.position.set(x,y,z);(g||car).add(b);return b}
+var body=M(0x2a4a86),dark=M(0x05070d,{metalness:.9,roughness:.1}),glow=new THREE.MeshBasicMaterial({color:0xffffff}),red=new THREE.MeshBasicMaterial({color:0xff2d55}),cy=new THREE.MeshBasicMaterial({color:0x22d3ee});
+B(4.4,.75,1.9,body,0,.7,0);B(2.6,.7,1.75,body,-.25,1.4,0);B(2.62,.46,1.78,dark,-.25,1.42,0);B(2.3,.06,1.5,dark,-.25,1.78,0);
+B(.12,.12,1.9,dark,2.2,.35,0);B(.1,.5,1.5,dark,2.21,.75,0);B(.1,.09,.5,glow,2.23,.95,.62);B(.1,.09,.5,glow,2.23,.95,-.62);B(.1,.07,1.9,cy,2.22,.95,0).scale.z=.3;
+B(.1,.1,.5,red,-2.22,.95,.7);B(.1,.1,.5,red,-2.22,.95,-.7);B(.1,.05,1.9,red,-2.22,.95,0).scale.z=.5;
+B(2.4,.05,.06,dark,-.25,1.86,.6);B(2.4,.05,.06,dark,-.25,1.86,-.6);
+var W=[];[[1.4,1],[1.4,-1],[-1.4,1],[-1.4,-1]].forEach(function(p){var w=new THREE.Group();w.position.set(p[0],.42,p[1]*.98);
+ var t=new THREE.Mesh(new THREE.CylinderGeometry(.44,.44,.32,28),M(0x0a0c12,{metalness:.2,roughness:.8}));t.rotation.x=Math.PI/2;w.add(t);
+ var r=new THREE.Mesh(new THREE.TorusGeometry(.3,.035,8,28),cy);r.position.z=p[1]*.17;w.add(r);
+ for(var k=0;k<3;k++){var sp=new THREE.Mesh(new THREE.BoxGeometry(.58,.05,.04),cy);sp.position.z=p[1]*.17;sp.rotation.z=k*Math.PI/3;w.add(sp)}
+ car.add(w);W.push(w)});
+var ug=new THREE.Mesh(new THREE.PlaneGeometry(5.4,2.8),new THREE.MeshBasicMaterial({color:0x22d3ee,transparent:true,opacity:.3,blending:THREE.AdditiveBlending,depthWrite:false}));ug.rotation.x=-Math.PI/2;ug.position.y=.03;car.add(ug);
+var road=new THREE.Mesh(new THREE.PlaneGeometry(90,40),M(0x0a1224,{metalness:.9,roughness:.3}));road.rotation.x=-Math.PI/2;S.add(road);
+var gr=new THREE.GridHelper(90,90,0x22d3ee,0x1a2a55);gr.position.y=.01;gr.material.transparent=true;gr.material.opacity=.25;S.add(gr);
+var mv=[];function mk(n,mat,w,h,d,zf,yf,sp){for(var i=0;i<n;i++){var m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(Math.random()*60-30,yf(),zf());m.userData.s=sp+Math.random()*sp;S.add(m);mv.push(m)}}
+var lm=new THREE.MeshBasicMaterial({color:0xffffff});
+for(var i=0;i<16;i++)[-3,3].forEach(function(z){var m=new THREE.Mesh(new THREE.BoxGeometry(1.6,.02,.12),lm);m.position.set(i*4-30,.03,z);m.userData.s=14;S.add(m);mv.push(m)});
+mk(40,cy,3,.03,.03,function(){var z=(Math.random()<.5?-1:1)*(4+Math.random()*10);return z},function(){return .2+Math.random()*3},26);
+mk(24,new THREE.MeshBasicMaterial({color:0x8b5cf6}),4,.03,.03,function(){return (Math.random()<.5?-1:1)*(4+Math.random()*10)},function(){return .2+Math.random()*4},34);
+var rm=matchMedia("(prefers-reduced-motion:reduce)").matches,drag=0,dx=0,pd=0;
+var cv=$("gl");cv.onpointerdown=function(e){pd=1;dx=e.clientX;cv.style.cursor="grabbing"};addEventListener("pointerup",function(){pd=0;cv.style.cursor="grab"});
+addEventListener("pointermove",function(e){if(pd){drag-=(e.clientX-dx)*.008;dx=e.clientX}});
+function rs(){var r=document.documentElement.classList.contains("rot"),w=r?innerHeight:innerWidth,h=r?innerWidth:innerHeight;R.setSize(w,h,false);C.aspect=w/h;C.updateProjectionMatrix()}window.rsz=rs;rs();
+var cp=new THREE.Vector3(8,2.6,8),cl=new THREE.Vector3(0,1,0),T=0,last=performance.now();
+function loop(now){requestAnimationFrame(loop);if(document.hidden||window.FXOFF)return;var dt=Math.min(.05,(now-last)/1000);last=now;T+=dt;var k=rm?.2:1;
+ mv.forEach(function(m){m.position.x-=m.userData.s*dt*k;if(m.position.x<-32)m.position.x=32});
+ W.forEach(function(w){w.rotation.z+=dt*9*k});
+ car.position.y=Math.sin(T*2)*.012*k;
+ var ph=view=="ph",a=.85+(rm?0:Math.sin(T*.25)*.45)+drag,r=ph?8.5:document.documentElement.classList.contains("L")?10:7.2,h=ph?2.2:2.1,Lc=document.documentElement.classList.contains("L"),m=ph&&!Lc,ly=m?-1.4:ph?0:.9,xo=0;
+ var tp=new THREE.Vector3(Math.cos(a)*r,h,Math.sin(a)*r),tl=new THREE.Vector3(xo,ly+(!Lc&&!ph?-1.2:0),0);
+ cp.lerp(tp,.06);cl.lerp(tl,.06);C.position.copy(cp);C.lookAt(cl);
+ p1.intensity=3+Math.sin(T*2)*.8;R.render(S,C)}
+window.fxSet=function(a,b){p1.color.set(a);p2.color.set(b);cy.color.set(a)};window.fxOn=function(v){$("gl").style.display=v?"":"none"};if(window.applyTh)applyTh();requestAnimationFrame(loop)})()}
+</script>
+</body>
+</html>

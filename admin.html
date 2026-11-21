@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex">
+<title>درب - لوحة الإدارة</title>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#f1f5ff;--mute:#9aa8c7;--cy:#22d3ee;--vi:#8b5cf6;--bg:#0a1020;--gl:rgba(255,255,255,.06);--gb:rgba(255,255,255,.13);--ok:#34d399;--wm:#fbbf24;--er:#f87171}
+*{box-sizing:border-box;margin:0}
+body{background:radial-gradient(60% 40% at 80% 0,rgba(139,92,246,.25),transparent),radial-gradient(50% 40% at 0 100%,rgba(34,211,238,.18),transparent),var(--bg);background-attachment:fixed;color:var(--ink);font-family:"Readex Pro",Tahoma,system-ui,sans-serif;min-height:100vh;padding:env(safe-area-inset-top) 0 90px}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer;border:0;background:none}
+input,select,textarea{padding:11px 12px;border-radius:13px;border:1px solid var(--gb);background:rgba(0,0,0,.3);min-width:0;width:100%}
+:focus-visible{outline:3px solid var(--cy);outline-offset:2px}
+.wrap{max-width:900px;margin:auto;padding:14px}
+.card{background:linear-gradient(135deg,rgba(255,255,255,.09),rgba(255,255,255,.03));border:1px solid var(--gb);border-radius:20px;padding:14px;backdrop-filter:blur(14px)}
+.btn{padding:10px 16px;border-radius:13px;background:linear-gradient(90deg,var(--cy),var(--vi));color:#06101f;font-weight:700}
+.gh{background:var(--gl);border:1px solid var(--gb);color:var(--ink);font-weight:400}.dg{background:rgba(248,113,113,.15);border:1px solid var(--er);color:var(--er)}
+h1{font-size:20px}h2{font-size:17px;margin:14px 0 10px}small,.mu{color:var(--mute)}
+.top{display:flex;justify-content:space-between;align-items:center;padding:6px 2px 12px}
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;gap:2px;padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(10,16,32,.88);backdrop-filter:blur(18px);border-top:1px solid var(--gb);justify-content:center;z-index:5}
+.nav button{flex:1;max-width:120px;padding:8px 2px;border-radius:12px;color:var(--mute);font-size:12px;display:flex;flex-direction:column;align-items:center}.nav i{font-style:normal;font-size:18px}
+.nav .on{background:rgba(255,255,255,.1);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.st{padding:14px;border-radius:18px;background:var(--gl);border:1px solid var(--gb);text-align:right;width:100%}.st b{font-size:30px;display:block;font-weight:600}.st span{color:var(--mute);font-size:13px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-radius:16px;background:var(--gl);border:1px solid var(--gb);margin-bottom:8px;width:100%;text-align:right}
+.row .m{min-width:0;flex:1}.row .m b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bd{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600;flex:none}
+.b-trial{background:rgba(251,191,36,.15);color:var(--wm)}.b-paid{background:rgba(52,211,153,.15);color:var(--ok)}.b-exp{background:rgba(248,113,113,.15);color:var(--er)}.b-sus{background:rgba(255,255,255,.12);color:var(--mute)}
+.chips{display:flex;gap:6px;overflow:auto;margin:10px 0}.chips button{padding:7px 14px;border-radius:99px;background:var(--gl);border:1px solid var(--gb);white-space:nowrap;font-size:14px}.chips .on{background:linear-gradient(90deg,var(--cy),var(--vi));color:#06101f;font-weight:700}
+.f{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.f>*{flex:1 1 120px}
+.lb{display:block;font-size:13px;color:var(--mute);margin:10px 0 4px}
+.ov{position:fixed;inset:0;background:rgba(5,8,18,.8);backdrop-filter:blur(8px);z-index:20;overflow:auto;padding:14px}.ov .card{max-width:520px;margin:auto;background:#121a30}
+.ov[hidden],[hidden]{display:none!important}
+.kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--gb)}
+.tg{position:fixed;top:calc(12px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);background:linear-gradient(90deg,var(--cy),var(--vi));color:#06101f;font-weight:700;padding:9px 20px;border-radius:99px;z-index:50}
+.pg{display:flex;justify-content:center;gap:10px;align-items:center;margin-top:10px}
+.login{max-width:380px;margin:12vh auto 0}
+textarea{resize:vertical;min-height:90px;direction:ltr;font-family:monospace}
+</style>
+</head>
+<body>
+<div class="wrap" id="lg" hidden><div class="card login"><h1>درب · لوحة الإدارة</h1>
+ <label class="lb" for="le">الإيميل</label><input id="le" type="email" dir="ltr" autocomplete="username">
+ <label class="lb" for="lp">كلمة السر</label><input id="lp" type="password" dir="ltr" autocomplete="current-password">
+ <p id="lr" style="color:var(--er);min-height:22px;margin:8px 0"></p><button class="btn" id="lb" style="width:100%">دخول</button></div></div>
+
+<div class="wrap" id="app" hidden>
+ <div class="top"><h1 id="ttl"></h1><button class="btn gh" id="lo">خروج</button></div>
+ <div id="v"></div>
+</div>
+<nav class="nav" id="nv" hidden></nav>
+<div class="ov" id="ov" hidden><div class="card" id="oc"></div></div>
+<div class="tg" id="tg" hidden></div>
+
+<script>
+const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ERR={invalid_credentials:"الإيميل أو كلمة السر غلط",forbidden:"هذا الحساب ليس مديراً",not_found:"غير موجود",bad_credentials:"الإيميل أو كلمة السر غلط",too_many_requests:"محاولات كثيرة، انتظر شوي",bad_value:"قيمة غير صحيحة",bad_password:"كلمة السر قصيرة (6 أحرف على الأقل)",unauthorized:"انتهت الجلسة"};
+let TK=(()=>{try{return JSON.parse(sessionStorage.getItem("at")||"null")}catch(e){return null}})(),TAB="dash",UF="all",UQ="",UP=1,CF="free",CP=1;
+const fd=t=>new Date(t).toLocaleDateString("ar-JO",{year:"numeric",month:"short",day:"numeric"}),fdt=t=>new Date(t).toLocaleString("ar-JO");
+function toast(t){const e=$("tg");e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,2200)}
+const SB={url:"https://pncbdqziuigvbhahngpb.supabase.co",key:"sb_publishable_6-ZQnHAFl0eMpXvLk96G-Q_ycQxRgat"};
+const ec=e=>!e||e.status===undefined?"":(e.message&&/^[a-z_]+$/.test(e.message)?e.message:(e.error_code||e.error||"unknown"));
+const jh=x=>({"Content-Type":"application/json",apikey:SB.key,...(x?{Authorization:"Bearer "+x}:{})});
+async function sbf(p,o){const r=await fetch(SB.url+p,o);const d=await r.json().catch(()=>({}));if(!r.ok){d.status=r.status;throw d}return d}
+const sv=d=>{TK={access:d.access_token,refresh:d.refresh_token,exp:Date.now()+(d.expires_in||3600)*1e3};sessionStorage.setItem("at",JSON.stringify(TK))};
+async function tok(force){if(!TK)throw{status:401};if(!force&&TK.exp>Date.now()+6e4)return TK.access;const d=await sbf("/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:jh(),body:JSON.stringify({refresh_token:TK.refresh})});sv(d);return TK.access}
+async function rpc(n,a,retry){try{const t=await tok(retry);return await sbf("/rest/v1/rpc/"+n,{method:"POST",headers:jh(t),body:JSON.stringify(a||{})})}catch(e){if(e&&e.status==401&&!retry)return rpc(n,a,1);throw e}}
+async function api(p,m="GET",b){
+ if(p=="/login"){const d=await sbf("/auth/v1/token?grant_type=password",{method:"POST",headers:jh(),body:JSON.stringify({email:b.email.trim().toLowerCase(),password:b.password})});sv(d);let ok=false;try{ok=await rpc("is_admin")}catch(e){}if(ok!==true){TK=null;sessionStorage.removeItem("at");throw{status:403,message:"forbidden"}}return{ok:1}}
+ try{
+  const [path,qs]=p.split("?"),q=new URLSearchParams(qs||""),s=path.split("/").filter(Boolean),n=Number;
+  if(m=="GET"&&path=="/stats")return await rpc("admin_stats");
+  if(m=="GET"&&path=="/users")return await rpc("admin_users",{p_q:q.get("q")||"",p_f:q.get("f")||"all",p_page:n(q.get("p")||1)});
+  if(s[0]=="users"&&s[1]){const id=s[1],a=s[2];
+   if(m=="GET"&&!a)return await rpc("admin_user",{p_id:id});
+   if(m=="DELETE"&&!a)return await rpc("admin_delete_user",{p_id:id});
+   if(a=="extend")return await rpc("admin_extend",{p_id:id,p_days:n(b.days)});
+   if(a=="status")return await rpc("admin_set_status",{p_id:id,p_status:b.status});
+   if(a=="devices")return await rpc("admin_reset_devices",{p_id:id});
+   if(a=="password")return await rpc("admin_set_password",{p_id:id,p_password:b.password});
+   if(a=="note")return await rpc("admin_set_note",{p_id:id,p_note:b.note})}
+  if(path=="/settings")return await (m=="GET"?rpc("admin_get_settings"):rpc("admin_set_settings",{p:b}));
+  if(path=="/codes"&&m=="POST")return await rpc("admin_gen_codes",{p_count:n(b.count),p_days:n(b.days),p_batch:b.batch||""});
+  if(path=="/codes")return await rpc("admin_codes",{p_f:q.get("f")||"all",p_page:n(q.get("p")||1)});
+  if(s[0]=="codes"&&s[1]&&m=="DELETE")return await rpc("admin_delete_code",{p_id:n(s[1])});
+  if(path=="/log")return await rpc("admin_log");
+  throw{status:404,message:"not_found"}
+ }catch(e){if(e&&e.status==401){out()}throw e}}
+const msg=e=>ERR[ec(e)]||(e&&e.status===undefined?"تعذّر الاتصال بالسيرفر":"حدث خطأ");
+function out(){TK=null;sessionStorage.removeItem("at");$("app").hidden=$("nv").hidden=true;$("lg").hidden=false}
+$("lo").onclick=out;
+$("lb").onclick=async()=>{try{const d=await api("/login","POST",{email:$("le").value,password:$("lp").value});$("lp").value="";start()}catch(e){$("lr").textContent=msg(e)}};
+$("lp").onkeydown=e=>{if(e.key=="Enter")$("lb").click()};
+const TABS=[["dash","📊","الرئيسية"],["users","👥","المستخدمين"],["codes","🎟️","الأكواد"],["set","⚙️","الإعدادات"],["log","📜","السجل"]];
+function start(){$("lg").hidden=true;$("app").hidden=$("nv").hidden=false;$("nv").innerHTML=TABS.map(t=>`<button data-t="${t[0]}"><i>${t[1]}</i>${t[2]}</button>`).join("");go(TAB)}
+$("nv").onclick=e=>{const b=e.target.closest("button");if(b)go(b.dataset.t)};
+function go(t){TAB=t;document.querySelectorAll("#nv button").forEach(b=>b.classList.toggle("on",b.dataset.t==t));$("ttl").textContent=TABS.find(x=>x[0]==t)[2];({dash,users,codes,set:settings,log})[t]()}
+const stat=u=>u.status=="suspended"?["موقوف","b-sus"]:u.expires<=Date.now()?["منتهي","b-exp"]:u.paid?["مشترك","b-paid"]:["تجريبي","b-trial"];
+const left=u=>{const d=Math.ceil((u.expires-Date.now())/864e5);return d>0?`باقي ${d} يوم`:"انتهى "+fd(u.expires)};
+
+async function dash(){const s=await api("/stats"),C=[["total","كل الحسابات","all"],["trial","تجريبي","trial"],["paid","مشتركين","paid"],["expired","منتهي","expired"],["suspended","موقوف","suspended"],["soon","ينتهي خلال 7 أيام",""],["today","جدد (24 ساعة)",""],["codes_free","أكواد متاحة",""]];
+ $("v").innerHTML='<div class="grid">'+C.map(c=>`<button class="st" data-f="${c[2]}"><b>${s[c[0]]}</b><span>${c[1]}</span></button>`).join("")+"</div>";
+ $("v").onclick=e=>{const b=e.target.closest("[data-f]");if(b&&b.dataset.f){UF=b.dataset.f;UP=1;go("users")}}}
+
+async function users(){const d=await api(`/users?f=${UF}&p=${UP}&q=${encodeURIComponent(UQ)}`),F=[["all","الكل"],["trial","تجريبي"],["paid","مشترك"],["expired","منتهي"],["suspended","موقوف"]],pages=Math.max(1,Math.ceil(d.total/d.per));
+ $("v").innerHTML=`<input id="q" type="search" placeholder="ابحث بالإيميل" value="${esc(UQ)}"><div class="chips">${F.map(f=>`<button data-f="${f[0]}" class="${UF==f[0]?"on":""}">${f[1]}</button>`).join("")}</div>`+
+ (d.rows.map(u=>{const s=stat(u);return `<button class="row" data-id="${u.id}"><span class="m"><b dir="ltr" style="text-align:right">${esc(u.email)}</b><small>${left(u)} · ${u.devices} جهاز</small></span><span class="bd ${s[1]}">${s[0]}</span></button>`}).join("")||'<p class="mu" style="text-align:center;padding:20px">ما في نتائج</p>')+
+ `<div class="pg"><button class="btn gh" id="pv" ${UP<=1?"disabled":""}>السابق</button><small>${UP} / ${pages} · ${d.total}</small><button class="btn gh" id="nx" ${UP>=pages?"disabled":""}>التالي</button></div>`;
+ let tm;$("q").oninput=e=>{clearTimeout(tm);tm=setTimeout(()=>{UQ=e.target.value.trim();UP=1;users().then(()=>{const q=$("q");q.focus();q.setSelectionRange(99,99)})},400)};
+ $("v").onclick=e=>{const f=e.target.closest("[data-f]"),r=e.target.closest("[data-id]");if(f){UF=f.dataset.f;UP=1;users()}else if(r)detail(r.dataset.id);else if(e.target.id=="pv"){UP--;users()}else if(e.target.id=="nx"){UP++;users()}}}
+
+async function detail(id){const d=await api("/users/"+id),u=d.user,s=stat(u);
+ $("oc").innerHTML=`<div class="top"><h1 dir="ltr" style="font-size:16px">${esc(u.email)}</h1><button class="btn gh" id="cx">✕</button></div>
+ <div class="kv"><span class="mu">الحالة</span><span class="bd ${s[1]}">${s[0]}</span></div>
+ <div class="kv"><span class="mu">ينتهي</span><b>${fd(u.expires)} (${left(u)})</b></div>
+ <div class="kv"><span class="mu">سجّل</span><span>${fdt(u.created)}</span></div>
+ <div class="kv"><span class="mu">آخر ظهور</span><span>${u.seen?fdt(u.seen):"—"}</span></div>
+ <div class="kv"><span class="mu">الأجهزة</span><span>${d.devices.map(x=>esc(x.name||"جهاز")).join("، ")||"—"}</span></div>
+ <label class="lb">تمديد / تقليل الأيام</label><div class="f" style="margin:0"><button class="btn" data-d="7">+7</button><button class="btn" data-d="30">+30</button><button class="btn" data-d="90">+90</button><button class="btn gh" data-d="-7">−7</button></div>
+ <div class="f" style="margin-top:8px"><input id="cd" type="number" inputmode="numeric" placeholder="عدد أيام (سالب للتقليل)"><button class="btn" id="ca" style="flex:none">طبّق</button></div>
+ <label class="lb" for="nt">ملاحظة</label><textarea id="nt" style="direction:rtl;font-family:inherit;min-height:60px">${esc(u.note)}</textarea><button class="btn gh" id="ns" style="margin-top:6px">حفظ الملاحظة</button>
+ <label class="lb" for="np">كلمة سر جديدة</label><div class="f" style="margin:0"><input id="np" type="text" dir="ltr" placeholder="6 أحرف على الأقل"><button class="btn gh" id="ps" style="flex:none">تغيير</button></div>
+ <div class="f" style="margin-top:14px"><button class="btn gh" id="rd">تصفير الأجهزة</button><button class="btn gh" id="sp">${u.status=="suspended"?"إعادة تفعيل":"إيقاف الحساب"}</button><button class="btn dg" id="dl">حذف</button></div>`;
+ $("ov").hidden=false;const done=m=>{toast(m||"تم");detail(id);if(TAB=="users")users()};
+ $("cx").onclick=()=>$("ov").hidden=true;
+ $("oc").onclick=async e=>{const b=e.target.closest("[data-d]");if(!b)return;try{await api(`/users/${id}/extend`,"POST",{days:+b.dataset.d});done()}catch(x){toast(msg(x))}};
+ $("ca").onclick=async()=>{try{await api(`/users/${id}/extend`,"POST",{days:$("cd").value});done()}catch(x){toast(msg(x))}};
+ $("ns").onclick=async()=>{await api(`/users/${id}/note`,"POST",{note:$("nt").value});toast("تم الحفظ")};
+ $("ps").onclick=async()=>{try{await api(`/users/${id}/password`,"POST",{password:$("np").value});toast("تم تغيير كلمة السر");$("np").value=""}catch(x){toast(msg(x))}};
+ $("rd").onclick=async()=>{await api(`/users/${id}/devices`,"POST",{});done("تم تصفير الأجهزة")};
+ $("sp").onclick=async()=>{await api(`/users/${id}/status`,"POST",{status:u.status=="suspended"?"active":"suspended"});done()};
+ let c=0;$("dl").onclick=async function(){if(!c){c=1;this.textContent="تأكيد الحذف؟";return}await api("/users/"+id,"DELETE");$("ov").hidden=true;toast("تم الحذف");users()}}
+
+async function codes(){const d=await api(`/codes?f=${CF}&p=${CP}`),pages=Math.max(1,Math.ceil(d.total/d.per)),F=[["free","متاحة"],["used","مستخدمة"],["all","الكل"]];
+ $("v").innerHTML=`<div class="card"><h2 style="margin-top:0">توليد أكواد</h2><div class="f"><div><label class="lb" for="cn">العدد</label><input id="cn" type="number" inputmode="numeric" value="10"></div><div><label class="lb" for="cdy">المدة (أيام)</label><input id="cdy" type="number" inputmode="numeric" value="30"></div><div><label class="lb" for="cb">وصف الدفعة</label><input id="cb" placeholder="اختياري"></div></div><button class="btn" id="gn" style="width:100%">توليد</button><div id="gr"></div></div>
+ <h2>الأكواد</h2><div class="chips">${F.map(f=>`<button data-f="${f[0]}" class="${CF==f[0]?"on":""}">${f[1]}</button>`).join("")}</div>`+
+ (d.rows.map(c=>`<div class="row"><span class="m"><b dir="ltr" style="text-align:right;font-family:monospace">${esc(c.code)}</b><small>${c.days} يوم${c.batch?" · "+esc(c.batch):""}${c.used_by?" · استخدمه "+esc(c.used_by):""}</small></span>${c.used_by?'<span class="bd b-paid">مستخدم</span>':`<button class="btn dg" data-x="${c.id}">حذف</button>`}</div>`).join("")||'<p class="mu" style="text-align:center;padding:20px">ما في أكواد</p>')+
+ `<div class="pg"><button class="btn gh" id="pv" ${CP<=1?"disabled":""}>السابق</button><small>${CP} / ${pages} · ${d.total}</small><button class="btn gh" id="nx" ${CP>=pages?"disabled":""}>التالي</button></div>`;
+ $("gn").onclick=async()=>{try{const r=await api("/codes","POST",{count:$("cn").value,days:$("cdy").value,batch:$("cb").value});$("gr").innerHTML=`<label class="lb">الأكواد الجديدة (${r.days} يوم)</label><textarea id="gt" readonly>${esc(r.codes.join("\n"))}</textarea><button class="btn gh" id="cp" style="margin-top:6px">نسخ الكل</button>`;$("cp").onclick=async()=>{try{await navigator.clipboard.writeText(r.codes.join("\n"));toast("تم النسخ")}catch{$("gt").select();toast("حدد النص وانسخه")}}}catch(e){toast(msg(e))}};
+ $("v").onclick=async e=>{const f=e.target.closest("[data-f]"),x=e.target.closest("[data-x]");if(f){CF=f.dataset.f;CP=1;codes()}else if(x){await api("/codes/"+x.dataset.x,"DELETE");codes()}else if(e.target.id=="pv"){CP--;codes()}else if(e.target.id=="nx"){CP++;codes()}}}
+
+async function settings(){const s=await api("/settings");
+ $("v").innerHTML=`<div class="card"><label class="lb" for="s1">أيام الفترة المجانية للحسابات الجديدة</label><input id="s1" type="number" inputmode="numeric" value="${esc(s.trial_days)}">
+ <label class="lb" for="s2">الحد الأقصى للأجهزة بالحساب (0 = بلا حد)</label><input id="s2" type="number" inputmode="numeric" value="${esc(s.max_devices)}">
+ <label class="lb" for="s3">ساعات العمل بدون إنترنت بعد آخر تحقق</label><input id="s3" type="number" inputmode="numeric" value="${esc(s.offline_hours)}">
+ <label class="lb" for="s4">رسالة تظهر لكل المستخدمين</label><textarea id="s4" style="direction:rtl;font-family:inherit;min-height:70px">${esc(s.announcement)}</textarea>
+ <label class="row" style="margin-top:12px"><span>وضع الصيانة (إيقاف التطبيق مؤقتاً)</span><input id="s5" type="checkbox" style="width:22px;height:22px" ${s.maintenance=="1"?"checked":""}></label>
+ <button class="btn" id="sv" style="width:100%;margin-top:10px">حفظ</button><p class="mu" style="margin-top:10px;font-size:13px">تغيير أيام الفترة المجانية بيأثر على الحسابات الجديدة فقط. المستخدمين الحاليين بتعدّل لهم من صفحة المستخدمين.</p></div>`;
+ $("sv").onclick=async()=>{try{await api("/settings","POST",{trial_days:$("s1").value,max_devices:$("s2").value,offline_hours:$("s3").value,announcement:$("s4").value,maintenance:$("s5").checked});toast("تم الحفظ")}catch(e){toast(msg(e))}}}
+
+async function log(){const d=await api("/log");$("v").innerHTML=d.rows.map(r=>`<div class="row"><span class="m"><b>${esc(r.action)}</b><small dir="auto">${esc(r.detail)}</small></span><small style="flex:none">${esc(r.admin)}<br>${fdt(r.ts)}</small></div>`).join("")||'<p class="mu">فاضي</p>'}
+if(TK)start();else $("lg").hidden=false;
+</script>
+</body>
+</html>
