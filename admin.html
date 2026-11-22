@@ -39,6 +39,13 @@ h1{font-size:20px}h2{font-size:17px;margin:14px 0 10px}small,.mu{color:var(--mut
 .pg{display:flex;justify-content:center;gap:10px;align-items:center;margin-top:10px}
 .login{max-width:380px;margin:12vh auto 0}
 textarea{resize:vertical;min-height:90px;direction:ltr;font-family:monospace}
+html,body{overflow-x:hidden;max-width:100%}
+body{padding-bottom:175px}
+.nav{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;overflow:visible;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+.nav button{min-width:0;padding:6px 0;font-size:11px;border-radius:12px}.nav i{font-size:17px}
+.row{min-width:0;overflow:hidden}.row .m{min-width:0;overflow:hidden}.row .m small{overflow-wrap:anywhere}
+.row .m small.u{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wrap,.card,.ov .card{max-width:100%}input,select,textarea,video{max-width:100%}
 </style>
 </head>
 <body>
@@ -191,7 +198,7 @@ async function chans(){const L=await api("/channels"),q=CQ.toLowerCase(),F=L.fil
  $("cv").innerHTML=`<p class="mu" style="font-size:13px;margin-bottom:8px">قنوات بتظهر لكل المشتركين النشطين بتبويب «قنوات درب». المتصفح بيمنع الروابط اللي بتبدأ بـ http، فاستخدم https.</p>
  <div class="f"><button class="btn" id="ac">＋ قناة</button><button class="btn gh" id="im">📥 استيراد M3U</button><button class="btn dg" id="cl">🗑 حذف الكل</button></div>
  <input id="cq" type="search" placeholder="بحث (${L.length} قناة)" value="${esc(CQ)}" style="margin-bottom:10px">`+
- (F.slice(0,100).map(c=>`<button class="row" data-i="${c.id}"><span class="m"><b>${esc(c.name)}</b><small dir="ltr" style="text-align:right">${esc(c.grp?c.grp+" · ":"")}${esc(c.url.slice(0,60))}</small></span><span class="bd ${c.active?"b-paid":"b-sus"}">${c.active?"فعّالة":"مخفية"}</span></button>`).join("")||'<p class="mu" style="text-align:center;padding:20px">ما في قنوات</p>')+(F.length>100?`<p class="mu" style="text-align:center">عرض أول 100 من ${F.length} — استخدم البحث</p>`:"");
+ (F.slice(0,100).map(c=>`<button class="row" data-i="${c.id}"><span class="m"><b>${esc(c.name)}</b><small class="u" dir="ltr" style="text-align:right">${esc(c.grp?c.grp+" · ":"")}${esc(c.url.slice(0,60))}</small></span><span class="bd ${c.active?"b-paid":"b-sus"}">${c.active?"فعّالة":"مخفية"}</span></button>`).join("")||'<p class="mu" style="text-align:center;padding:20px">ما في قنوات</p>')+(F.length>100?`<p class="mu" style="text-align:center">عرض أول 100 من ${F.length} — استخدم البحث</p>`:"");
  let tm;$("cq").oninput=e=>{clearTimeout(tm);tm=setTimeout(()=>{CQ=e.target.value.trim();chans().then(()=>{const q=$("cq");q.focus();q.setSelectionRange(99,99)})},350)};
  const FF=[{k:"name",l:"اسم القناة"},{k:"url",l:"رابط البث (https://…m3u8)",d:1},{k:"grp",l:"التصنيف (اختياري)"},{k:"sort",l:"الترتيب",t:"number"},{k:"active",l:"فعّالة",t:"chk"}];
  const open=c=>form(c.id?"تعديل قناة":"قناة جديدة",FF,c.id?c:{sort:0},async o=>{await api("/channels","POST",o);chans()},c.id?async()=>{await api("/channels/"+c.id,"DELETE");chans()}:null);
@@ -209,7 +216,7 @@ function imp(){$("oc").innerHTML=`<div class="top"><h1 style="font-size:17px">ا
  $("is").onclick=async()=>{const a=m3u($("it").value);if(!a.length){toast("ما لقيت قنوات");return}$("is").disabled=true;try{let n=0;for(let i=0;i<a.length;i+=500){const r=await api("/channels/import","POST",{list:a.slice(i,i+500)});n+=r.added}$("ov").hidden=true;toast(`تمت إضافة ${n} قناة`);chans()}catch(e){toast(msg(e))}$("is").disabled=false}}
 async function iptvs(){const L=await api("/iptv");
  $("cv").innerHTML=`<p class="mu" style="font-size:13px;margin-bottom:8px">حساب IPTV بتضيفه هون بيظهر لكل المشتركين النشطين بتبويب «IPTV». <b style="color:var(--wm)">تنبيه:</b> بيانات الدخول بتوصل لجهاز كل مشترك، فأي واحد متمكّن بيقدر يشوفها.</p><button class="btn" id="ai" style="width:100%;margin-bottom:10px">＋ حساب IPTV</button>`+
- (L.map(a=>`<button class="row" data-i="${a.id}"><span class="m"><b>${esc(a.name)}</b><small dir="ltr" style="text-align:right">${esc(a.host)} · ${esc(a.username)}</small></span><span class="bd ${a.active?"b-paid":"b-sus"}">${a.active?"فعّال":"مخفي"}</span></button>`).join("")||'<p class="mu" style="text-align:center;padding:20px">ما في حسابات</p>');
+ (L.map(a=>`<button class="row" data-i="${a.id}"><span class="m"><b>${esc(a.name)}</b><small class="u" dir="ltr" style="text-align:right">${esc(a.host)} · ${esc(a.username)}</small></span><span class="bd ${a.active?"b-paid":"b-sus"}">${a.active?"فعّال":"مخفي"}</span></button>`).join("")||'<p class="mu" style="text-align:center;padding:20px">ما في حسابات</p>');
  const FF=[{k:"name",l:"اسم الحساب"},{k:"host",l:"الهوست host:port",d:1},{k:"username",l:"اسم المستخدم",d:1},{k:"password",l:"كلمة السر (اتركها فاضية للإبقاء على الحالية)",t:"password",d:1},{k:"sort",l:"الترتيب",t:"number"},{k:"active",l:"فعّال",t:"chk"}];
  const open=a=>form(a.id?"تعديل حساب":"حساب IPTV جديد",FF,a.id?a:{sort:0},async o=>{await api("/iptv","POST",o);iptvs()},a.id?async()=>{await api("/iptv/"+a.id,"DELETE");iptvs()}:null);
  $("cv").onclick=e=>{if(e.target.id=="ai")open({});const r=e.target.closest("[data-i]");if(r)open(L.find(x=>x.id==r.dataset.i))}}
@@ -221,7 +228,7 @@ async function chans(){const L=await api("/channels"),q=CQ.toLowerCase(),F=L.fil
  <div class="f"><button class="btn" id="ac">＋ قناة</button><button class="btn gh" id="im">📥 استيراد M3U</button><button class="btn gh" id="fr">🌐 القنوات المجانية</button></div>
  <div class="f"><button class="btn gh" id="ts">🩺 فحص القنوات</button><button class="btn gh" id="dd">🧹 تنظيف المكرر</button><button class="btn dg" id="cl">🗑 حذف الكل</button></div>
  <input id="cq" type="search" placeholder="بحث (${F.length} من ${L.length})" value="${esc(CQ)}" style="margin-bottom:10px">`+
- (F.slice(0,100).map(c=>`<div class="row" data-i="${c.id}" style="cursor:pointer"><span class="m"><b>${TEST[c.id]===true?"🟢 ":TEST[c.id]===false?"🔴 ":""}${esc(c.name)}</b><small dir="ltr" style="text-align:right">${esc(c.grp?c.grp+" · ":"")}${esc(c.url.slice(0,60))}</small></span><button class="btn dg" data-x="${c.id}" style="padding:7px 12px;flex:none">✕</button></div>`).join("")||'<p class="mu" style="text-align:center;padding:20px">ما في قنوات</p>')+(F.length>100?`<p class="mu" style="text-align:center">عرض أول 100 من ${F.length}: استخدم البحث</p>`:"");
+ (F.slice(0,100).map(c=>`<div class="row" data-i="${c.id}" style="cursor:pointer"><span class="m"><b>${TEST[c.id]===true?"🟢 ":TEST[c.id]===false?"🔴 ":""}${esc(c.name)}</b><small class="u" dir="ltr" style="text-align:right">${esc(c.grp?c.grp+" · ":"")}${esc(c.url.slice(0,60))}</small></span><button class="btn dg" data-x="${c.id}" style="padding:7px 12px;flex:none">✕</button></div>`).join("")||'<p class="mu" style="text-align:center;padding:20px">ما في قنوات</p>')+(F.length>100?`<p class="mu" style="text-align:center">عرض أول 100 من ${F.length}: استخدم البحث</p>`:"");
  let tm;$("cq").oninput=e=>{clearTimeout(tm);tm=setTimeout(()=>{CQ=e.target.value.trim();chans().then(()=>{const q=$("cq");q.focus();q.setSelectionRange(99,99)})},350)};
  const FF=[{k:"name",l:"اسم القناة"},{k:"url",l:"رابط البث (https://…m3u8)",d:1},{k:"grp",l:"التصنيف (اختياري)"},{k:"sort",l:"الترتيب",t:"number"},{k:"active",l:"فعّالة",t:"chk"}];
  const open=c=>form(c.id?"تعديل قناة":"قناة جديدة",FF,c.id?c:{sort:0},async o=>{await api("/channels","POST",o);chans()},c.id?async()=>{await api("/channels/"+c.id,"DELETE");chans()}:null);
