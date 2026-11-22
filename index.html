@@ -364,7 +364,7 @@ $("pgp").onclick=function(){if(!navigator.geolocation){toast("الموقع غي�
 pUpd();setInterval(pUpd,1000);
 /* ===== القنوات وIPTV ===== */
 var TV={cat:"",L:[],msg:"",h:null,ini:0,hid:0,cur:""};
-var TP=[["jo","الأردن","https://iptv-org.github.io/iptv/countries/jo.m3u"],["ar","عربي","https://iptv-org.github.io/iptv/languages/ara.m3u"]];
+var TP=[];
 function pm3u(t){var o=[],a=t.split(/\r?\n/),x=null;for(var i=0;i<a.length;i++){var l=a[i].trim();if(l.indexOf("#EXTINF")==0){var c=l.lastIndexOf(",");x={n:(c>-1?l.slice(c+1):"").trim(),g:(l.match(/group-title="([^"]*)"/)||[])[1]||""}}else if(x&&/^https?:\/\//.test(l)){x.u=l;if(x.n)o.push(x);x=null}}return o}
 function tvChips(){var a=[];if(CH.length)a.push('<button data-k="d">⭐ قنوات درب</button>');SI.forEach(function(x,i){a.push('<button data-k="s'+i+'">🔑 '+esc(x.n)+'</button>')});
  $("tch").innerHTML=a.concat(TP.map(function(p,i){return'<button data-k="p'+i+'">'+p[1]+'</button>'})).concat(D.pl.map(function(p,i){return'<button data-k="u'+i+'">'+esc(p.n)+'</button>'})).concat(['<button data-k="add">＋ حساب IPTV</button>']).join("")}
@@ -384,7 +384,7 @@ function tvPlay(s){var v=$("vid");try{A.pause()}catch(e){}tvStop();$("tvn").text
  if(window.Hls&&Hls.isSupported()&&/\.m3u8/i.test(s.u)){var h=new Hls();TV.h=h;h.loadSource(s.u);h.attachMedia(v);h.on(Hls.Events.MANIFEST_PARSED,function(){v.play().catch(function(){})});h.on(Hls.Events.ERROR,function(e,d){if(d.fatal){toast("القناة غير متاحة");h.destroy();TV.h=null}})}
  else{v.src=s.u;v.play().catch(function(){toast("تعذّر تشغيل القناة")})}
  tvMark()}
-function openTv(m){$("tv").hidden=false;tvChips();tvSet(m=="iptv"?(SI.length?"s0":D.pl.length?"u0":"add"):(CH.length?"d":"p0"))}
+function openTv(m){$("tv").hidden=false;tvChips();tvSet(m=="iptv"?(SI.length?"s0":D.pl.length?"u0":"add"):(CH.length?"d":SI.length?"s0":D.pl.length?"u0":"add"))}
 $("tch").onclick=function(e){var b=e.target.closest("button");if(b)tvSet(b.dataset.k)};
 $("tq").oninput=tvDraw;
 $("tls").onclick=function(e){var t=e.target.closest(".st");if(!t)return;for(var i=0;i<TV.L.length;i++)if(encodeURIComponent(TV.L[i].u)==t.dataset.u){tvPlay(TV.L[i]);break}};

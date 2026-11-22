@@ -20,8 +20,8 @@ input,select,textarea{padding:11px 12px;border-radius:13px;border:1px solid var(
 .gh{background:var(--gl);border:1px solid var(--gb);color:var(--ink);font-weight:400}.dg{background:rgba(248,113,113,.15);border:1px solid var(--er);color:var(--er)}
 h1{font-size:20px}h2{font-size:17px;margin:14px 0 10px}small,.mu{color:var(--mute)}
 .top{display:flex;justify-content:space-between;align-items:center;padding:6px 2px 12px}
-.nav{position:fixed;bottom:0;left:0;right:0;display:flex;gap:2px;padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(10,16,32,.88);backdrop-filter:blur(18px);border-top:1px solid var(--gb);justify-content:center;z-index:5}
-.nav button{flex:1;max-width:120px;padding:8px 2px;border-radius:12px;color:var(--mute);font-size:12px;display:flex;flex-direction:column;align-items:center}.nav i{font-style:normal;font-size:18px}
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;gap:2px;padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(10,16,32,.88);backdrop-filter:blur(18px);border-top:1px solid var(--gb);justify-content:flex-start;overflow-x:auto;z-index:5}
+.nav button{flex:0 0 auto;min-width:66px;padding:8px 2px;border-radius:12px;color:var(--mute);font-size:12px;display:flex;flex-direction:column;align-items:center}.nav i{font-style:normal;font-size:18px}
 .nav .on{background:rgba(255,255,255,.1);color:#fff}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
 .st{padding:14px;border-radius:18px;background:var(--gl);border:1px solid var(--gb);text-align:right;width:100%}.st b{font-size:30px;display:block;font-weight:600}.st span{color:var(--mute);font-size:13px}
@@ -83,11 +83,18 @@ async function api(p,m="GET",b){
    if(a=="password")return await rpc("admin_set_password",{p_id:id,p_password:b.password});
    if(a=="note")return await rpc("admin_set_note",{p_id:id,p_note:b.note})}
   if(path=="/settings")return await (m=="GET"?rpc("admin_get_settings"):rpc("admin_set_settings",{p:b}));
-  if(path=="/codes"&&m=="POST")return await rpc("admin_gen_codes",{p_count:n(b.count),p_days:n(b.days),p_batch:b.batch||""});
+  if(path=="/codes"&&m=="POST")return await rpc("admin_gen_codes",{p_count:n(b.count),p_days:n(b.days),p_batch:b.batch||"",p_price:n(b.price||0)});
   if(path=="/codes")return await rpc("admin_codes",{p_f:q.get("f")||"all",p_page:n(q.get("p")||1)});
   if(s[0]=="codes"&&s[1]&&m=="DELETE")return await rpc("admin_delete_code",{p_id:n(s[1])});
   if(path=="/plans")return await (m=="GET"?rpc("admin_plans"):rpc("admin_save_plan",{p:b}));
   if(s[0]=="plans"&&s[1]&&m=="DELETE")return await rpc("admin_delete_plan",{p_id:n(s[1])});
+  if(path=="/subs")return await rpc("admin_subscriptions",{p_q:q.get("q")||"",p_f:q.get("f")||"all",p_sort:q.get("s")||"new",p_page:n(q.get("p")||1)});
+  if(path=="/revenue"||(path=="/expenses"&&m=="GET")){const a=q.get("from"),b2=q.get("to");return await rpc(path=="/revenue"?"admin_revenue":"admin_expenses",{p_from:a?n(a):null,p_to:b2?n(b2):null})}
+  if(path=="/expenses"&&m=="POST")return await rpc("admin_save_expense",{p:b});
+  if(s[0]=="expenses"&&s[1]&&m=="DELETE")return await rpc("admin_delete_expense",{p_id:n(s[1])});
+  if(path=="/channels/delete")return await rpc("admin_delete_channels",{p_ids:b.ids});
+  if(path=="/channels/dedupe")return await rpc("admin_dedupe_channels");
+  if(s[0]=="codes"&&s[2]=="price")return await rpc("admin_set_code_price",{p_id:n(s[1]),p_price:n(b.price)});
   if(path=="/channels/import")return await rpc("admin_import_channels",{p:b.list});
   if(path=="/channels")return await (m=="GET"?rpc("admin_channels"):m=="DELETE"?rpc("admin_clear_channels"):rpc("admin_save_channel",{p:b}));
   if(s[0]=="channels"&&s[1]&&m=="DELETE")return await rpc("admin_delete_channel",{p_id:n(s[1])});
@@ -101,10 +108,10 @@ function out(){TK=null;sessionStorage.removeItem("at");$("app").hidden=$("nv").h
 $("lo").onclick=out;
 $("lb").onclick=async()=>{try{const d=await api("/login","POST",{email:$("le").value,password:$("lp").value});$("lp").value="";start()}catch(e){$("lr").textContent=msg(e)}};
 $("lp").onkeydown=e=>{if(e.key=="Enter")$("lb").click()};
-const TABS=[["dash","📊","الرئيسية"],["users","👥","مستخدمين"],["codes","🎟️","أكواد"],["plans","💳","باقات"],["content","📺","محتوى"],["set","⚙️","إعدادات"],["log","📜","سجل"]];
+const TABS=[["dash","📊","الرئيسية"],["users","👥","مستخدمين"],["subs","🧾","اشتراكات"],["rev","💰","أرباح"],["codes","🎟️","أكواد"],["plans","💳","باقات"],["content","📺","محتوى"],["set","⚙️","إعدادات"],["log","📜","سجل"]];
 function start(){$("lg").hidden=true;$("app").hidden=$("nv").hidden=false;$("nv").innerHTML=TABS.map(t=>`<button data-t="${t[0]}"><i>${t[1]}</i>${t[2]}</button>`).join("");go(TAB)}
 $("nv").onclick=e=>{const b=e.target.closest("button");if(b)go(b.dataset.t)};
-function go(t){TAB=t;document.querySelectorAll("#nv button").forEach(b=>b.classList.toggle("on",b.dataset.t==t));$("ttl").textContent=TABS.find(x=>x[0]==t)[2];({dash,users,codes,plans:plansP,content,set:settings,log})[t]()}
+function go(t){TAB=t;document.querySelectorAll("#nv button").forEach(b=>b.classList.toggle("on",b.dataset.t==t));$("ttl").textContent=TABS.find(x=>x[0]==t)[2];({dash,users,subs:subsP,rev:revP,codes,plans:plansP,content,set:settings,log})[t]();const a=document.querySelector("#nv .on");if(a&&a.scrollIntoView)a.scrollIntoView({inline:"center",block:"nearest"})}
 const stat=u=>u.status=="suspended"?["موقوف","b-sus"]:u.expires<=Date.now()?["منتهي","b-exp"]:u.paid?["مشترك","b-paid"]:["تجريبي","b-trial"];
 const left=u=>{const d=Math.ceil((u.expires-Date.now())/864e5);return d>0?`باقي ${d} يوم`:"انتهى "+fd(u.expires)};
 
@@ -131,7 +138,7 @@ async function detail(id){const d=await api("/users/"+id),u=d.user,s=stat(u);
  <label class="lb" for="nt">ملاحظة</label><textarea id="nt" style="direction:rtl;font-family:inherit;min-height:60px">${esc(u.note)}</textarea><button class="btn gh" id="ns" style="margin-top:6px">حفظ الملاحظة</button>
  <label class="lb" for="np">كلمة سر جديدة</label><div class="f" style="margin:0"><input id="np" type="text" dir="ltr" placeholder="6 أحرف على الأقل"><button class="btn gh" id="ps" style="flex:none">تغيير</button></div>
  <div class="f" style="margin-top:14px"><button class="btn gh" id="rd">تصفير الأجهزة</button><button class="btn gh" id="sp">${u.status=="suspended"?"إعادة تفعيل":"إيقاف الحساب"}</button><button class="btn dg" id="dl">حذف</button></div>`;
- $("ov").hidden=false;const done=m=>{toast(m||"تم");detail(id);if(TAB=="users")users()};
+ $("ov").hidden=false;const done=m=>{toast(m||"تم");detail(id);if(TAB=="users")users();else if(TAB=="subs")subsP()};
  $("cx").onclick=()=>$("ov").hidden=true;
  $("oc").onclick=async e=>{const b=e.target.closest("[data-d]");if(!b)return;try{await api(`/users/${id}/extend`,"POST",{days:+b.dataset.d});done()}catch(x){toast(msg(x))}};
  $("ca").onclick=async()=>{try{await api(`/users/${id}/extend`,"POST",{days:$("cd").value});done()}catch(x){toast(msg(x))}};
@@ -190,7 +197,7 @@ async function chans(){const L=await api("/channels"),q=CQ.toLowerCase(),F=L.fil
  const open=c=>form(c.id?"تعديل قناة":"قناة جديدة",FF,c.id?c:{sort:0},async o=>{await api("/channels","POST",o);chans()},c.id?async()=>{await api("/channels/"+c.id,"DELETE");chans()}:null);
  $("cv").onclick=async e=>{const t=e.target.id,r=e.target.closest("[data-i]");
   if(t=="ac")open({});else if(r)open(L.find(x=>x.id==r.dataset.i));
-  else if(t=="cl"){if(!e.target.dataset.c){e.target.dataset.c=1;e.target.textContent="تأكيد حذف كل القنوات؟";return}await api("/channels","DELETE");toast("تم الحذف");chans()}
+  else if(t=="cl"){if(!e.target.dataset.ok){e.target.dataset.ok=1;e.target.textContent="تأكيد حذف كل القنوات؟";return}await api("/channels","DELETE");toast("تم الحذف");chans()}
   else if(t=="im")imp()}}
 function imp(){$("oc").innerHTML=`<div class="top"><h1 style="font-size:17px">استيراد قنوات M3U</h1><button class="btn gh" id="cx">✕</button></div>
  <label class="lb" for="iu">رابط قائمة M3U (اختياري، بيشتغل إذا السيرفر بيسمح)</label><input id="iu" dir="ltr" placeholder="https://…/list.m3u"><button class="btn gh" id="ig" style="margin-top:6px">جلب من الرابط</button>
@@ -206,6 +213,81 @@ async function iptvs(){const L=await api("/iptv");
  const FF=[{k:"name",l:"اسم الحساب"},{k:"host",l:"الهوست host:port",d:1},{k:"username",l:"اسم المستخدم",d:1},{k:"password",l:"كلمة السر (اتركها فاضية للإبقاء على الحالية)",t:"password",d:1},{k:"sort",l:"الترتيب",t:"number"},{k:"active",l:"فعّال",t:"chk"}];
  const open=a=>form(a.id?"تعديل حساب":"حساب IPTV جديد",FF,a.id?a:{sort:0},async o=>{await api("/iptv","POST",o);iptvs()},a.id?async()=>{await api("/iptv/"+a.id,"DELETE");iptvs()}:null);
  $("cv").onclick=e=>{if(e.target.id=="ai")open({});const r=e.target.closest("[data-i]");if(r)open(L.find(x=>x.id==r.dataset.i))}}
+const fm=n=>(+n).toLocaleString("en",{minimumFractionDigits:2,maximumFractionDigits:2});
+let TEST={};
+function probe(url,ms=9000){return new Promise(res=>{const v=document.createElement("video");v.muted=true;v.playsInline=true;v.preload="auto";let d=0;const fin=o=>{if(d)return;d=1;clearTimeout(t);v.onloadeddata=v.onerror=v.onplaying=null;v.removeAttribute("src");try{v.load()}catch(e){}res(o)};const t=setTimeout(()=>fin(false),ms);v.onloadeddata=()=>fin(true);v.onplaying=()=>fin(true);v.onerror=()=>fin(false);v.src=url;v.play().catch(()=>{})})}
+async function chans(){const L=await api("/channels"),q=CQ.toLowerCase(),F=L.filter(c=>!q||c.name.toLowerCase().includes(q)||(c.grp||"").toLowerCase().includes(q));
+ $("cv").innerHTML=`<p class="mu" style="font-size:13px;margin-bottom:8px">قنوات بتظهر لكل المشتركين النشطين بتبويب «⭐ قنوات درب». المتصفح بيمنع الروابط اللي بتبدأ بـ http، فاستخدم https.</p>
+ <div class="f"><button class="btn" id="ac">＋ قناة</button><button class="btn gh" id="im">📥 استيراد M3U</button><button class="btn gh" id="fr">🌐 القنوات المجانية</button></div>
+ <div class="f"><button class="btn gh" id="ts">🩺 فحص القنوات</button><button class="btn gh" id="dd">🧹 تنظيف المكرر</button><button class="btn dg" id="cl">🗑 حذف الكل</button></div>
+ <input id="cq" type="search" placeholder="بحث (${F.length} من ${L.length})" value="${esc(CQ)}" style="margin-bottom:10px">`+
+ (F.slice(0,100).map(c=>`<div class="row" data-i="${c.id}" style="cursor:pointer"><span class="m"><b>${TEST[c.id]===true?"🟢 ":TEST[c.id]===false?"🔴 ":""}${esc(c.name)}</b><small dir="ltr" style="text-align:right">${esc(c.grp?c.grp+" · ":"")}${esc(c.url.slice(0,60))}</small></span><button class="btn dg" data-x="${c.id}" style="padding:7px 12px;flex:none">✕</button></div>`).join("")||'<p class="mu" style="text-align:center;padding:20px">ما في قنوات</p>')+(F.length>100?`<p class="mu" style="text-align:center">عرض أول 100 من ${F.length}: استخدم البحث</p>`:"");
+ let tm;$("cq").oninput=e=>{clearTimeout(tm);tm=setTimeout(()=>{CQ=e.target.value.trim();chans().then(()=>{const q=$("cq");q.focus();q.setSelectionRange(99,99)})},350)};
+ const FF=[{k:"name",l:"اسم القناة"},{k:"url",l:"رابط البث (https://…m3u8)",d:1},{k:"grp",l:"التصنيف (اختياري)"},{k:"sort",l:"الترتيب",t:"number"},{k:"active",l:"فعّالة",t:"chk"}];
+ const open=c=>form(c.id?"تعديل قناة":"قناة جديدة",FF,c.id?c:{sort:0},async o=>{await api("/channels","POST",o);chans()},c.id?async()=>{await api("/channels/"+c.id,"DELETE");chans()}:null);
+ $("cv").onclick=async e=>{const t=e.target,id=t.id,x=t.closest("[data-x]"),r=t.closest("[data-i]");
+  try{
+   if(x){if(!x.dataset.ok){x.dataset.ok=1;x.textContent="تأكيد؟";return}await api("/channels/"+x.dataset.x,"DELETE");toast("تم الحذف");return chans()}
+   if(id=="ac")return open({});if(r)return open(L.find(z=>z.id==r.dataset.i));
+   if(id=="cl"){if(!t.dataset.ok){t.dataset.ok=1;t.textContent="تأكيد حذف الكل ("+L.length+")؟";return}const d=await api("/channels","DELETE");toast("تم حذف "+d.deleted+" قناة");TEST={};return chans()}
+   if(id=="dd"){const d=await api("/channels/dedupe","POST",{});toast("حُذف "+d.deleted+" مكرر");return chans()}
+   if(id=="im")return imp();if(id=="fr")return freeImp();if(id=="ts")return tester(F,L)
+  }catch(err){toast(msg(err))}}}
+function freeImp(){const S=[["الأردن","https://iptv-org.github.io/iptv/countries/jo.m3u"],["العربية","https://iptv-org.github.io/iptv/languages/ara.m3u"]];
+ $("oc").innerHTML=`<div class="top"><h1 style="font-size:17px">القنوات المجانية</h1><button class="btn gh" id="cx">✕</button></div><p class="mu" style="font-size:13px;line-height:1.8">بتجلب القنوات العامة من مشروع iptv-org وتضيفها لقنواتك (روابط https فقط، والمكرر بيتجاهل). بعدها افحصها بزر «🩺 فحص القنوات» واحذف الميتة.</p>`+S.map((s,i)=>`<button class="btn" data-s="${i}" style="width:100%;margin-top:10px">استيراد قنوات ${s[0]}</button>`).join("")+`<p class="mu" id="fmx" style="margin-top:10px"></p>`;
+ $("ov").hidden=false;$("cx").onclick=()=>$("ov").hidden=true;
+ $("oc").onclick=async e=>{const b=e.target.closest("[data-s]");if(!b)return;const s=S[+b.dataset.s];b.disabled=true;$("fmx").textContent="جاري الجلب…";
+  try{const r=await fetch(s[1]);if(!r.ok)throw 0;const a=m3u(await r.text()).filter(x=>x.url.startsWith("https://")).map(x=>({...x,grp:s[0]+(x.grp?" · "+x.grp:"")}));let n=0;for(let i=0;i<a.length;i+=500){const d=await api("/channels/import","POST",{list:a.slice(i,i+500)});n+=d.added;$("fmx").textContent=`تمت إضافة ${n} من ${a.length}…`}$("fmx").textContent=`تم: أُضيف ${n} قناة جديدة (من ${a.length})`;chans()}catch(err){$("fmx").textContent=err&&err.status===undefined?"تعذّر الجلب من المصدر":msg(err)}b.disabled=false}}
+function tester(F,L){const canHls=!!document.createElement("video").canPlayType("application/vnd.apple.mpegurl");
+ $("oc").innerHTML=`<div class="top"><h1 style="font-size:17px">فحص القنوات</h1><button class="btn gh" id="cx">✕</button></div>
+ <p class="mu" style="font-size:13px;line-height:1.8">بيجرّب يشغّل كل قناة بجهازك ويحدد الشغّالة والميتة. الفحص تقريبي: بعض القنوات ممكن تكون شغّالة بس محجوبة جغرافياً أو بطيئة. ${canHls?"":'<b style="color:var(--er)">هالمتصفح ما بيشغّل HLS مباشرة، افتح اللوحة من كروم أندرويد أو سفاري.</b>'}</p>
+ <label class="lb" for="ts_s">شو بدك تفحص؟</label><select id="ts_s"><option value="v">القنوات المعروضة (${F.length})</option><option value="a">كل القنوات (${L.length})</option></select>
+ <button class="btn" id="ts_go" ${canHls?"":"disabled"} style="width:100%;margin-top:10px">ابدأ الفحص</button>
+ <div style="height:10px;border-radius:9px;background:rgba(255,255,255,.1);margin-top:12px;overflow:hidden"><div id="ts_b" style="height:100%;width:0;background:linear-gradient(90deg,var(--cy),var(--vi));transition:width .3s"></div></div>
+ <p id="ts_t" class="mu" style="margin:8px 0"></p><div id="ts_r"></div>`;
+ $("ov").hidden=false;let stop=false,dead=[];
+ $("cx").onclick=()=>{stop=true;$("ov").hidden=true;chans()};
+ $("ts_go").onclick=async()=>{const list=($("ts_s").value=="a"?L:F).slice();stop=false;dead=[];$("ts_go").disabled=true;$("ts_r").innerHTML="";let i=0,ok=0,bad=0;const total=list.length;
+  const run=async()=>{while(!stop){const c=list[i++];if(!c)return;const r=await probe(c.url);TEST[c.id]=r;if(r)ok++;else{bad++;dead.push(c.id)}$("ts_b").style.width=((ok+bad)/total*100)+"%";$("ts_t").textContent=`تم فحص ${ok+bad} من ${total} · 🟢 ${ok} · 🔴 ${bad}`}};
+  await Promise.all(Array.from({length:6},run));$("ts_go").disabled=false;
+  if(dead.length)$("ts_r").innerHTML=`<button class="btn dg" id="ts_d" style="width:100%">حذف القنوات الميتة (${dead.length})</button>`;else if(!stop)$("ts_r").innerHTML='<p style="color:var(--ok)">كل القنوات المفحوصة شغّالة ✓</p>';
+  const dd=$("ts_d");if(dd)dd.onclick=async function(){if(!this.dataset.ok){this.dataset.ok=1;this.textContent="تأكيد حذف "+dead.length+"؟";return}try{let n=0;for(let k=0;k<dead.length;k+=500){const r=await api("/channels/delete","POST",{ids:dead.slice(k,k+500)});n+=r.deleted}$("ov").hidden=true;toast("حُذفت "+n+" قناة ميتة");chans()}catch(err){toast(msg(err))}}}}
+
+async function codes(){const PL=await api("/plans").catch(()=>[]);const d=await api(`/codes?f=${CF}&p=${CP}`),pages=Math.max(1,Math.ceil(d.total/d.per)),F=[["free","متاحة"],["used","مستخدمة"],["all","الكل"]];
+ $("v").innerHTML=`<div class="card"><h2 style="margin-top:0">توليد أكواد</h2><label class="lb" for="cpl">من باقة (اختياري)</label><select id="cpl"><option value="">—</option>${PL.map(p=>`<option value="${p.days}|${esc(p.name)}|${p.price}">${esc(p.name)} (${p.days} يوم · ${p.price})</option>`).join("")}</select><div class="f"><div><label class="lb" for="cn">العدد</label><input id="cn" type="number" inputmode="numeric" value="10"></div><div><label class="lb" for="cdy">المدة (أيام)</label><input id="cdy" type="number" inputmode="numeric" value="30"></div><div><label class="lb" for="cpr">سعر الكود</label><input id="cpr" type="number" inputmode="decimal" step="any" value="0"></div><div><label class="lb" for="cb">وصف الدفعة</label><input id="cb" placeholder="اختياري"></div></div><button class="btn" id="gn" style="width:100%">توليد</button><div id="gr"></div></div>
+ <h2>الأكواد <small class="mu" style="font-size:12px">· اضغط على كود لتعديل سعره</small></h2><div class="chips">${F.map(f=>`<button data-f="${f[0]}" class="${CF==f[0]?"on":""}">${f[1]}</button>`).join("")}</div>`+
+ (d.rows.map(c=>`<div class="row" data-pr="${c.id}" data-pv="${c.price}" style="cursor:pointer"><span class="m"><b dir="ltr" style="text-align:right;font-family:monospace">${esc(c.code)}</b><small>${c.days} يوم · ${fm(c.price)}${c.batch?" · "+esc(c.batch):""}${c.used_by?" · استخدمه "+esc(c.used_by):""}</small></span>${c.used_at?'<span class="bd b-paid">مستخدم</span>':`<button class="btn dg" data-x="${c.id}" style="flex:none">حذف</button>`}</div>`).join("")||'<p class="mu" style="text-align:center;padding:20px">ما في أكواد</p>')+
+ `<div class="pg"><button class="btn gh" id="pv" ${CP<=1?"disabled":""}>السابق</button><small>${CP} / ${pages} · ${d.total}</small><button class="btn gh" id="nx" ${CP>=pages?"disabled":""}>التالي</button></div>`;
+ $("cpl").onchange=e=>{const v=e.target.value.split("|");if(v[0]){$("cdy").value=v[0];$("cb").value=v[1]||"";$("cpr").value=v[2]||0}};
+ $("gn").onclick=async()=>{try{const r=await api("/codes","POST",{count:$("cn").value,days:$("cdy").value,batch:$("cb").value,price:$("cpr").value});$("gr").innerHTML=`<label class="lb">الأكواد الجديدة (${r.days} يوم)</label><textarea id="gt" readonly>${esc(r.codes.join("\n"))}</textarea><button class="btn gh" id="cp" style="margin-top:6px">نسخ الكل</button>`;$("cp").onclick=async()=>{try{await navigator.clipboard.writeText(r.codes.join("\n"));toast("تم النسخ")}catch{$("gt").select();toast("حدد النص وانسخه")}}}catch(e){toast(msg(e))}};
+ $("v").onclick=async e=>{const f=e.target.closest("[data-f]"),x=e.target.closest("[data-x]"),pr=e.target.closest("[data-pr]");
+  try{if(f){CF=f.dataset.f;CP=1;codes()}else if(x){await api("/codes/"+x.dataset.x,"DELETE");codes()}
+  else if(pr){form("سعر الكود",[{k:"price",l:"السعر",t:"number"}],{price:pr.dataset.pv},async o=>{await api("/codes/"+pr.dataset.pr+"/price","POST",{price:o.price});codes()})}
+  else if(e.target.id=="pv"){CP--;codes()}else if(e.target.id=="nx"){CP++;codes()}}catch(err){toast(msg(err))}}}
+
+let SF="all",SS="new",SQ="",SP=1;
+async function subsP(){const d=await api(`/subs?f=${SF}&s=${SS}&p=${SP}&q=${encodeURIComponent(SQ)}`),pages=Math.max(1,Math.ceil(d.total/d.per)),F=[["all","الكل"],["trial","تجريبي"],["paid","مشترك"],["expired","منتهي"],["suspended","موقوف"]],B={trial:["تجريبي","b-trial"],paid:["مشترك","b-paid"],expired:["منتهي","b-exp"],suspended:["موقوف","b-sus"]};
+ $("v").innerHTML=`<input id="sq" type="search" placeholder="ابحث بالإيميل" value="${esc(SQ)}"><div class="chips">${F.map(f=>`<button data-f="${f[0]}" class="${SF==f[0]?"on":""}">${f[1]}</button>`).join("")}</div><div class="chips"><button data-s="new" class="${SS=="new"?"on":""}">الأحدث</button><button data-s="expiring" class="${SS=="expiring"?"on":""}">الأقرب انتهاءً</button></div>`+
+ (d.rows.map(u=>{const b=B[u.st],lc=u.last_code,l1=u.st=="trial"?`فترة تجريبية · ينتهي ${fd(u.expires)} (باقي ${u.days_left} يوم)`:u.st=="paid"?`ينتهي ${fd(u.expires)} (باقي ${u.days_left} يوم)`:u.st=="expired"?`انتهى ${fd(u.expires)}`:"حسابه موقوف",
+  l2=u.codes_n?`آخر كود: ${lc.days} يوم${+lc.price?" · "+fm(lc.price):""}${lc.batch?" · "+esc(lc.batch):""} بتاريخ ${fd(lc.at)}<br>مجموع أكواده: ${u.codes_n} (${u.codes_days} يوم · ${fm(u.paid_total)})`:"ما استخدم أي كود";
+  return `<button class="row" data-id="${u.id}" style="align-items:flex-start"><span class="m"><b dir="ltr" style="text-align:right">${esc(u.email)}</b><small>${l1}</small><small style="display:block;margin-top:2px;line-height:1.7">${l2}</small></span><span class="bd ${b[1]}">${b[0]}</span></button>`}).join("")||'<p class="mu" style="text-align:center;padding:20px">ما في نتائج</p>')+
+ `<div class="pg"><button class="btn gh" id="pv" ${SP<=1?"disabled":""}>السابق</button><small>${SP} / ${pages} · ${d.total}</small><button class="btn gh" id="nx" ${SP>=pages?"disabled":""}>التالي</button></div>`;
+ let tm;$("sq").oninput=e=>{clearTimeout(tm);tm=setTimeout(()=>{SQ=e.target.value.trim();SP=1;subsP().then(()=>{const q=$("sq");q.focus();q.setSelectionRange(99,99)})},400)};
+ $("v").onclick=e=>{const f=e.target.closest("[data-f]"),s=e.target.closest("[data-s]"),r=e.target.closest("[data-id]");if(f){SF=f.dataset.f;SP=1;subsP()}else if(s){SS=s.dataset.s;SP=1;subsP()}else if(r)detail(r.dataset.id);else if(e.target.id=="pv"){SP--;subsP()}else if(e.target.id=="nx"){SP++;subsP()}}}
+
+let RP="month";
+const PERIODS=[["month","هذا الشهر"],["last","الشهر الماضي"],["3m","آخر 3 أشهر"],["year","هذه السنة"],["all","الكل"]];
+function prange(k){const n=new Date(),y=n.getFullYear(),m=n.getMonth();return k=="month"?[new Date(y,m,1),new Date(y,m+1,1)]:k=="last"?[new Date(y,m-1,1),new Date(y,m,1)]:k=="3m"?[new Date(y,m-2,1),new Date(y,m+1,1)]:k=="year"?[new Date(y,0,1),new Date(y+1,0,1)]:[null,null]}
+async function revP(){const [a,b]=prange(RP),q=`from=${a?+a:""}&to=${b?+b:""}`,[r,ex]=await Promise.all([api("/revenue?"+q),api("/expenses?"+q)]),cur=esc(r.currency),mx=Math.max(1,...r.months.map(m=>Math.max(+m.rev,+m.exp)));
+ $("v").innerHTML=`<div class="chips">${PERIODS.map(p=>`<button data-p="${p[0]}" class="${RP==p[0]?"on":""}">${p[1]}</button>`).join("")}</div>
+ <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"><div class="st"><span>المبيعات</span><b>${fm(r.revenue)}</b><span>${cur} · ${r.redeemed} كود مفعّل</span></div><div class="st"><span>المصاريف</span><b style="color:var(--wm)">${fm(r.expenses)}</b><span>${cur}</span></div><div class="st"><span>الصافي</span><b style="color:${r.net>=0?"var(--ok)":"var(--er)"}">${fm(r.net)}</b><span>${cur}</span></div></div>
+ <p class="mu" style="font-size:13px;margin:10px 2px;line-height:1.8">المبيعات بتنحسب لما العميل يفعّل الكود، بسعر الكود وقت توليده. أكواد مولّدة وما انفعّلت لسا: ${r.unused_count} بقيمة ${fm(r.unused_value)} ${cur}.</p>
+ <h2>آخر 12 شهر</h2><div class="card"><div style="display:flex;gap:4px;align-items:flex-end;direction:ltr">${r.months.map(m=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0"><div style="display:flex;gap:2px;align-items:flex-end;height:100px;width:100%"><div title="${fm(m.rev)}" style="flex:1;background:var(--cy);border-radius:3px 3px 0 0;height:${+m.rev/mx*100}%;min-height:${+m.rev?2:0}px"></div><div title="${fm(m.exp)}" style="flex:1;background:var(--wm);border-radius:3px 3px 0 0;height:${+m.exp/mx*100}%;min-height:${+m.exp?2:0}px"></div></div><small style="font-size:10px">${m.m.slice(5)}</small></div>`).join("")}</div><p class="mu" style="font-size:12px;margin-top:8px"><span style="color:var(--cy)">■</span> مبيعات &nbsp; <span style="color:var(--wm)">■</span> مصاريف</p></div>
+ <h2>المبيعات حسب الباقة / الدفعة</h2>${r.by_batch.map(b=>`<div class="row"><span class="m"><b>${esc(b.name)}</b><small>${b.n} كود</small></span><b>${fm(b.sum)} ${cur}</b></div>`).join("")||'<p class="mu">ما في مبيعات بهالفترة</p>'}
+ <div class="top" style="margin-top:18px"><h2 style="margin:0">المصاريف</h2><button class="btn" id="ae">＋ مصروف</button></div><p class="mu" style="font-size:13px;margin-bottom:8px">سجّل هون تكاليفك (اشتراك IPTV، السيرفر، إعلانات…) ليظهر الصافي.</p>`+
+ (ex.map(e=>`<div class="row" data-e="${e.id}" style="cursor:pointer"><span class="m"><b>${esc(e.title)}</b><small>${esc(e.spent_at)}${e.note?" · "+esc(e.note):""}</small></span><b>${fm(e.amount)}</b></div>`).join("")||'<p class="mu" style="text-align:center;padding:14px">ما في مصاريف بهالفترة</p>');
+ const eform=e=>form(e.id?"تعديل مصروف":"مصروف جديد",[{k:"title",l:"البيان (مثال: اشتراك IPTV)"},{k:"amount",l:"المبلغ",t:"number"},{k:"spent_at",l:"التاريخ",t:"date"},{k:"note",l:"ملاحظة (اختياري)"}],e.id?e:{spent_at:new Date().toLocaleDateString("sv")},async o=>{await api("/expenses","POST",o);revP()},e.id?async()=>{await api("/expenses/"+e.id,"DELETE");revP()}:null);
+ $("v").onclick=e=>{const p=e.target.closest("[data-p]"),x=e.target.closest("[data-e]");if(p){RP=p.dataset.p;revP()}else if(e.target.id=="ae")eform({});else if(x)eform(ex.find(z=>z.id==x.dataset.e))}}
 if(TK)start();else $("lg").hidden=false;
 </script>
 </body>
