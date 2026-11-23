@@ -366,12 +366,12 @@ pUpd();setInterval(pUpd,1000);
 var TV={cat:"",L:[],msg:"",h:null,ini:0,hid:0,cur:""};
 var TP=[];
 function pm3u(t){var o=[],a=t.split(/\r?\n/),x=null;for(var i=0;i<a.length;i++){var l=a[i].trim();if(l.indexOf("#EXTINF")==0){var c=l.lastIndexOf(",");x={n:(c>-1?l.slice(c+1):"").trim(),g:(l.match(/group-title="([^"]*)"/)||[])[1]||""}}else if(x&&/^https?:\/\//.test(l)){x.u=l;if(x.n)o.push(x);x=null}}return o}
-function tvChips(){var a=[];if(CH.length)a.push('<button data-k="d">⭐ قنوات درب</button>');SI.forEach(function(x,i){a.push('<button data-k="s'+i+'">🔑 '+esc(x.n)+'</button>')});
+function tvChips(){var a=[];CH.forEach(function(l,i){a.push('<button data-k="d'+i+'">'+esc(l.name)+'</button>')});SI.forEach(function(x,i){a.push('<button data-k="s'+i+'">🔑 '+esc(x.n)+'</button>')});
  $("tch").innerHTML=a.concat(TP.map(function(p,i){return'<button data-k="p'+i+'">'+p[1]+'</button>'})).concat(D.pl.map(function(p,i){return'<button data-k="u'+i+'">'+esc(p.n)+'</button>'})).concat(['<button data-k="add">＋ حساب IPTV</button>']).join("")}
 function tvIn(a){var s=a.filter(function(x){return x.u.indexOf("https://")==0});TV.hid=a.length-s.length;TV.L=s;TV.msg=a.length?"كل القنوات بروابط http غير آمنة ولا تشتغل بالمتصفح":"القائمة فاضية";tvDraw()}
 function tvFetch(u,k){TV.L=[];TV.hid=0;TV.msg="جاري التحميل…";tvDraw();fetch(u).then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(t){if(TV.cat==k)tvIn(pm3u(t))}).catch(function(){if(TV.cat!=k)return;TV.msg="تعذّر تحميل القائمة. (الميزة بتشتغل بعد النشر على سيرفرك، مش داخل المعاينة)";tvDraw()})}
 function tvSet(k){TV.cat=k;Q("#tch button").forEach(function(b){b.classList.toggle("on",b.dataset.k==k)});$("tf").hidden=k!="add";$("td").hidden=k[0]!="u";$("tcs").hidden=true;$("tinf").textContent="";TV.cf="";
- if(k=="d"){tvIn(CH.map(function(c){return{n:c.n,u:c.u,g:c.g}}));return}
+ if(k[0]=="d"&&CH[+k.slice(1)]){tvIn(CH[+k.slice(1)].channels.map(function(c){return{n:c.n,u:c.u,g:c.g}}));return}
  if(k[0]=="s"&&SI[+k.slice(1)]){xl(SI[+k.slice(1)],k);return}
  if(k=="add"){TV.L=[];TV.hid=0;TV.msg="سجّل دخول بالهوست واسم المستخدم وكلمة السر.";tvDraw();return}
  if(k[0]=="u"){var p=D.pl[+k.slice(1)];if(p.h){xl(p,k);return}if(p.t)tvIn(pm3u(p.t));else tvFetch(p.u,k);return}
@@ -384,7 +384,7 @@ function tvPlay(s){var v=$("vid");try{A.pause()}catch(e){}tvStop();$("tvn").text
  if(window.Hls&&Hls.isSupported()&&/\.m3u8/i.test(s.u)){var h=new Hls();TV.h=h;h.loadSource(s.u);h.attachMedia(v);h.on(Hls.Events.MANIFEST_PARSED,function(){v.play().catch(function(){})});h.on(Hls.Events.ERROR,function(e,d){if(d.fatal){toast("القناة غير متاحة");h.destroy();TV.h=null}})}
  else{v.src=s.u;v.play().catch(function(){toast("تعذّر تشغيل القناة")})}
  tvMark()}
-function openTv(m){$("tv").hidden=false;tvChips();tvSet(m=="iptv"?(SI.length?"s0":D.pl.length?"u0":"add"):(CH.length?"d":SI.length?"s0":D.pl.length?"u0":"add"))}
+function openTv(m){$("tv").hidden=false;tvChips();tvSet(m=="iptv"?(SI.length?"s0":D.pl.length?"u0":"add"):(CH.length?"d0":SI.length?"s0":D.pl.length?"u0":"add"))}
 $("tch").onclick=function(e){var b=e.target.closest("button");if(b)tvSet(b.dataset.k)};
 $("tq").oninput=tvDraw;
 $("tls").onclick=function(e){var t=e.target.closest(".st");if(!t)return;for(var i=0;i<TV.L.length;i++)if(encodeURIComponent(TV.L[i].u)==t.dataset.u){tvPlay(TV.L[i]);break}};
@@ -431,7 +431,7 @@ window.onTrip=function(t){D.tr.unshift(t);D.tr=D.tr.slice(0,200);save();drawTr()
 var CH=[],SI=[],PUB=null,LT="month",PREVIEW=false,SB={url:"https://pncbdqziuigvbhahngpb.supabase.co",key:"sb_publishable_6-ZQnHAFl0eMpXvLk96G-Q_ycQxRgat"},AU=null,LC=null,gm="login",lastChk=0;
 var GE={bad_credentials:"الإيميل أو كلمة السر غلط",invalid_credentials:"الإيميل أو كلمة السر غلط",email_exists:"هالإيميل مسجّل مسبقاً",bad_email:"الإيميل غير صحيح",bad_password:"كلمة السر لازم 6 أحرف على الأقل",device_limit:"الحساب مربوط بجهاز ثاني. اطلب من الإدارة فك الربط",device_used:"هذا الجهاز استخدم فترة تجريبية سابقاً. سجّل الدخول بحسابك",no_license:"الحساب غير مفعّل، تواصل مع الإدارة",suspended:"هالحساب موقوف",too_many_requests:"محاولات كثيرة، انتظر شوي",over_request_rate_limit:"محاولات كثيرة، انتظر شوي",maintenance:"التطبيق تحت الصيانة حالياً",bad_code:"الكود غير صحيح أو مستخدم",no_device:"تعذّر تحديد الجهاز"};
 function ls(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k)||"null");if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
-AU=ls("darb_auth");LC=ls("darb_lic");CH=ls("darb_ch")||[];SI=ls("darb_si")||[];PUB=ls("darb_pub");
+AU=ls("darb_auth");LC=ls("darb_lic");CH=ls("darb_chl")||[];SI=ls("darb_si")||[];PUB=ls("darb_pub");
 function devId(){if(window.DarbNative&&DarbNative.deviceId)try{return String(DarbNative.deviceId())}catch(e){}var d=ls("darb_dev");if(!d){d="w"+Math.random().toString(36).slice(2)+Date.now().toString(36);ls("darb_dev",d)}return d}
 function sbf(p,o){return fetch(SB.url+p,o).then(function(r){return r.json().catch(function(){return{}}).then(function(d){if(!r.ok){d=d||{};d.status=r.status;throw d}return d})})}
 function ec(e){if(!e||e.status===undefined)return"";if(e.message&&/^[a-z_]+$/.test(e.message))return e.message;return e.error_code||e.error||"unknown"}
@@ -472,7 +472,7 @@ if(AU)chk();else showLand();
 function showLandBg(){$("land").hidden=false;document.body.classList.add("landing");window.LAND=1;try{mode()}catch(e){}revealInit()}
 function showLand(){showLandBg();$("gate").hidden=true;loadPub()}
 function hideLand(){$("land").hidden=true;document.body.classList.remove("landing");window.LAND=0;try{mode()}catch(e){}}
-function loadContent(){rpc("get_channels").then(function(a){CH=a;ls("darb_ch",a)}).catch(function(){});rpc("get_shared_iptv").then(function(a){SI=a;ls("darb_si",a)}).catch(function(){})}
+function loadContent(){rpc("get_channel_lists").then(function(a){CH=a;ls("darb_chl",a)}).catch(function(){});rpc("get_shared_iptv").then(function(a){SI=a;ls("darb_si",a)}).catch(function(){})}
 function waLink(t){var n=PUB&&PUB.contact_whatsapp;return n?"https://wa.me/"+n+"?text="+encodeURIComponent(t||""):""}
 function loadPub(){fetch(SB.url+"/rest/v1/rpc/get_public",{method:"POST",headers:jh(),body:"{}"}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){PUB=d;ls("darb_pub",d);drawPub()}).catch(function(){
  if(!PUB&&PREVIEW)PUB={trial_days:7,contact_whatsapp:"",contact_text:"للاشتراك تواصل معنا",plans:[{id:1,name:"شهري",price:5,currency:"د.أ",period:"month",days:30,badge:"",features:"كل الميزات\nتحديثات مجانية"},{id:2,name:"سنوي",price:45,currency:"د.أ",period:"year",days:365,badge:"الأكثر توفيراً",features:"كل الميزات\nتحديثات مجانية\nوفّر شهرين"}]};drawPub()})}
@@ -566,7 +566,7 @@ function loop(now){requestAnimationFrame(loop);if(document.hidden||window.FXOFF)
  var ph=view=="ph",a=.85+(rm?0:Math.sin(T*.25)*.45)+drag,r=ph?8.5:document.documentElement.classList.contains("L")?10:7.2,h=ph?2.2:2.1,Lc=document.documentElement.classList.contains("L"),m=ph&&!Lc,ly=m?-1.4:ph?0:.9,xo=0;
  var tp=new THREE.Vector3(Math.cos(a)*r,h,Math.sin(a)*r),tl=new THREE.Vector3(xo,ly+(!Lc&&!ph?-1.2:0),0);
  cp.lerp(tp,.06);cl.lerp(tl,.06);C.position.copy(cp);C.lookAt(cl);
- if(window.LAND){var W=innerWidth,H=innerHeight,pt=H>W;C.setViewOffset(W,H,pt?0:W*.2,pt?-H*.22:0,W,H)}else if(C.view&&C.view.enabled)C.clearViewOffset();
+ if(window.LAND){var vw=innerWidth,vh=innerHeight,pt=vh>vw;C.setViewOffset(vw,vh,pt?0:vw*.2,pt?-vh*.22:0,vw,vh)}else if(C.view&&C.view.enabled)C.clearViewOffset();
  p1.intensity=3+Math.sin(T*2)*.8;R.render(S,C)}
 window.fxSet=function(a,b){p1.color.set(a);p2.color.set(b);cy.color.set(a)};window.fxOn=function(v){$("gl").style.display=v?"":"none"};if(window.applyTh)applyTh();requestAnimationFrame(loop)})()}
 </script>

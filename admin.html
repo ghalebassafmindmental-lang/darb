@@ -100,10 +100,12 @@ async function api(p,m="GET",b){
   if(path=="/expenses"&&m=="POST")return await rpc("admin_save_expense",{p:b});
   if(s[0]=="expenses"&&s[1]&&m=="DELETE")return await rpc("admin_delete_expense",{p_id:n(s[1])});
   if(path=="/channels/delete")return await rpc("admin_delete_channels",{p_ids:b.ids});
-  if(path=="/channels/dedupe")return await rpc("admin_dedupe_channels");
+  if(path=="/channels/dedupe")return await rpc("admin_dedupe_channels",{p_list:n(b.list_id)});
   if(s[0]=="codes"&&s[2]=="price")return await rpc("admin_set_code_price",{p_id:n(s[1]),p_price:n(b.price)});
-  if(path=="/channels/import")return await rpc("admin_import_channels",{p:b.list});
-  if(path=="/channels")return await (m=="GET"?rpc("admin_channels"):m=="DELETE"?rpc("admin_clear_channels"):rpc("admin_save_channel",{p:b}));
+  if(path=="/lists")return await (m=="GET"?rpc("admin_lists"):rpc("admin_save_list",{p:b}));
+  if(s[0]=="lists"&&s[1]&&m=="DELETE")return await rpc("admin_delete_list",{p_id:n(s[1])});
+  if(path=="/channels/import")return await rpc("admin_import_channels",{p:b.list,p_list:n(b.list_id)});
+  if(path=="/channels")return await (m=="GET"?rpc("admin_channels",{p_list:n(q.get("list"))}):m=="DELETE"?rpc("admin_clear_channels",{p_list:n(q.get("list"))}):rpc("admin_save_channel",{p:b}));
   if(s[0]=="channels"&&s[1]&&m=="DELETE")return await rpc("admin_delete_channel",{p_id:n(s[1])});
   if(path=="/iptv")return await (m=="GET"?rpc("admin_iptv"):rpc("admin_save_iptv",{p:b}));
   if(s[0]=="iptv"&&s[1]&&m=="DELETE")return await rpc("admin_delete_iptv",{p_id:n(s[1])});
@@ -266,7 +268,7 @@ async function codes(){const PL=await api("/plans").catch(()=>[]);const d=await 
  (d.rows.map(c=>`<div class="row" data-pr="${c.id}" data-pv="${c.price}" style="cursor:pointer"><span class="m"><b dir="ltr" style="text-align:right;font-family:monospace">${esc(c.code)}</b><small>${c.days} يوم · ${fm(c.price)}${c.batch?" · "+esc(c.batch):""}${c.used_by?" · استخدمه "+esc(c.used_by):""}</small></span>${c.used_at?'<span class="bd b-paid">مستخدم</span>':`<button class="btn dg" data-x="${c.id}" style="flex:none">حذف</button>`}</div>`).join("")||'<p class="mu" style="text-align:center;padding:20px">ما في أكواد</p>')+
  `<div class="pg"><button class="btn gh" id="pv" ${CP<=1?"disabled":""}>السابق</button><small>${CP} / ${pages} · ${d.total}</small><button class="btn gh" id="nx" ${CP>=pages?"disabled":""}>التالي</button></div>`;
  $("cpl").onchange=e=>{const v=e.target.value.split("|");if(v[0]){$("cdy").value=v[0];$("cb").value=v[1]||"";$("cpr").value=v[2]||0}};
- $("gn").onclick=async()=>{try{const r=await api("/codes","POST",{count:$("cn").value,days:$("cdy").value,batch:$("cb").value,price:$("cpr").value});$("gr").innerHTML=`<label class="lb">الأكواد الجديدة (${r.days} يوم)</label><textarea id="gt" readonly>${esc(r.codes.join("\n"))}</textarea><button class="btn gh" id="cp" style="margin-top:6px">نسخ الكل</button>`;$("cp").onclick=async()=>{try{await navigator.clipboard.writeText(r.codes.join("\n"));toast("تم النسخ")}catch{$("gt").select();toast("حدد النص وانسخه")}}}catch(e){toast(msg(e))}};
+ $("gn").onclick=async()=>{try{const r=await api("/codes","POST",{count:$("cn").value,days:$("cdy").value,batch:$("cb").value,price:$("cpr").value});if(!(+$("cpr").value>0))toast("تنبيه: سعر الكود 0، فما رح يدخل بالأرباح");$("gr").innerHTML=`<label class="lb">الأكواد الجديدة (${r.days} يوم)</label><textarea id="gt" readonly>${esc(r.codes.join("\n"))}</textarea><button class="btn gh" id="cp" style="margin-top:6px">نسخ الكل</button>`;$("cp").onclick=async()=>{try{await navigator.clipboard.writeText(r.codes.join("\n"));toast("تم النسخ")}catch{$("gt").select();toast("حدد النص وانسخه")}}}catch(e){toast(msg(e))}};
  $("v").onclick=async e=>{const f=e.target.closest("[data-f]"),x=e.target.closest("[data-x]"),pr=e.target.closest("[data-pr]");
   try{if(f){CF=f.dataset.f;CP=1;codes()}else if(x){await api("/codes/"+x.dataset.x,"DELETE");codes()}
   else if(pr){form("سعر الكود",[{k:"price",l:"السعر",t:"number"}],{price:pr.dataset.pv},async o=>{await api("/codes/"+pr.dataset.pr+"/price","POST",{price:o.price});codes()})}
@@ -295,6 +297,47 @@ async function revP(){const [a,b]=prange(RP),q=`from=${a?+a:""}&to=${b?+b:""}`,[
  (ex.map(e=>`<div class="row" data-e="${e.id}" style="cursor:pointer"><span class="m"><b>${esc(e.title)}</b><small>${esc(e.spent_at)}${e.note?" · "+esc(e.note):""}</small></span><b>${fm(e.amount)}</b></div>`).join("")||'<p class="mu" style="text-align:center;padding:14px">ما في مصاريف بهالفترة</p>');
  const eform=e=>form(e.id?"تعديل مصروف":"مصروف جديد",[{k:"title",l:"البيان (مثال: اشتراك IPTV)"},{k:"amount",l:"المبلغ",t:"number"},{k:"spent_at",l:"التاريخ",t:"date"},{k:"note",l:"ملاحظة (اختياري)"}],e.id?e:{spent_at:new Date().toLocaleDateString("sv")},async o=>{await api("/expenses","POST",o);revP()},e.id?async()=>{await api("/expenses/"+e.id,"DELETE");revP()}:null);
  $("v").onclick=e=>{const p=e.target.closest("[data-p]"),x=e.target.closest("[data-e]");if(p){RP=p.dataset.p;revP()}else if(e.target.id=="ae")eform({});else if(x)eform(ex.find(z=>z.id==x.dataset.e))}}
+let CLID=null;
+async function chans(){const LS=await api("/lists");
+ if(LS.length&&(!CLID||!LS.some(l=>l.id==CLID)))CLID=LS[0].id;
+ const cur=LS.find(l=>l.id==CLID),L=cur?await api("/channels?list="+CLID):[],q=CQ.toLowerCase(),F=L.filter(c=>!q||c.name.toLowerCase().includes(q)||(c.grp||"").toLowerCase().includes(q));
+ const lf=l=>form(l.id?"تعديل القائمة":"قائمة جديدة",[{k:"name",l:"اسم القائمة (بيظهر للعميل)"},{k:"sort",l:"الترتيب (رقم أصغر = أول)",t:"number"},{k:"active",l:"ظاهرة للعملاء",t:"chk"}],l.id?l:{sort:LS.length},async o=>{const r=await api("/lists","POST",o);CLID=r.id;chans()});
+ $("cv").innerHTML=`<p class="mu" style="font-size:13px;margin-bottom:8px">كل قائمة بتظهر للعميل كتبويب باسمها بصفحة القنوات. أنشئ قائمة لكل نوع (مثلاً: قنوات أجنبية، رياضة…) وأضف قنواتها.</p>
+ <div class="chips">${LS.map(l=>`<button data-l="${l.id}" class="${l.id==CLID?"on":""}">${esc(l.name)} (${l.n})${l.active?"":" 🚫"}</button>`).join("")}<button data-l="new">＋ قائمة جديدة</button></div>`+
+ (cur?`<div class="f"><button class="btn gh" id="le">✎ تعديل القائمة</button><button class="btn dg" id="ld">🗑 حذف القائمة</button></div>
+ <h2 style="margin-top:6px">قائمة «${esc(cur.name)}» ${cur.active?"":'<small class="mu">· مخفية عن العملاء</small>'}</h2>
+ <div class="f"><button class="btn" id="ac">＋ قناة</button><button class="btn gh" id="im">📥 استيراد M3U</button><button class="btn gh" id="fr">🌐 القنوات المجانية</button></div>
+ <div class="f"><button class="btn gh" id="ts">🩺 فحص القنوات</button><button class="btn gh" id="dd">🧹 تنظيف المكرر</button><button class="btn dg" id="cl">🗑 حذف كل قنوات القائمة</button></div>
+ <input id="cq" type="search" placeholder="بحث (${F.length} من ${L.length})" value="${esc(CQ)}" style="margin-bottom:10px">`+
+ (F.slice(0,100).map(c=>`<div class="row" data-i="${c.id}" style="cursor:pointer"><span class="m"><b>${TEST[c.id]===true?"🟢 ":TEST[c.id]===false?"🔴 ":""}${esc(c.name)}</b><small class="u" dir="ltr" style="text-align:right">${esc(c.grp?c.grp+" · ":"")}${esc(c.url.slice(0,60))}</small></span><button class="btn dg" data-x="${c.id}" style="padding:7px 12px;flex:none">✕</button></div>`).join("")||'<p class="mu" style="text-align:center;padding:20px">القائمة فاضية. أضف قنوات أو استورد ملف M3U.</p>')+(F.length>100?`<p class="mu" style="text-align:center">عرض أول 100 من ${F.length}: استخدم البحث</p>`:""):'<p class="mu" style="text-align:center;padding:20px">أنشئ قائمة أول.</p>');
+ const cq=$("cq");if(cq){let tm;cq.oninput=e=>{clearTimeout(tm);tm=setTimeout(()=>{CQ=e.target.value.trim();chans().then(()=>{const q=$("cq");q.focus();q.setSelectionRange(99,99)})},350)}}
+ const FF=[{k:"name",l:"اسم القناة"},{k:"url",l:"رابط البث (https://…m3u8)",d:1},{k:"grp",l:"التصنيف (اختياري)"},{k:"list_id",l:"القائمة",t:"sel",o:LS.map(l=>[l.id,l.name])},{k:"sort",l:"الترتيب",t:"number"},{k:"active",l:"فعّالة",t:"chk"}];
+ const open=c=>form(c.id?"تعديل قناة":"قناة جديدة",FF,c.id?c:{sort:0,list_id:CLID},async o=>{await api("/channels","POST",o);chans()},c.id?async()=>{await api("/channels/"+c.id,"DELETE");chans()}:null);
+ $("cv").onclick=async e=>{const t=e.target,id=t.id,x=t.closest("[data-x]"),r=t.closest("[data-i]"),lb=t.closest("[data-l]");
+  try{
+   if(lb){if(lb.dataset.l=="new")return lf({});CLID=+lb.dataset.l;CQ="";return chans()}
+   if(id=="le")return lf(cur);
+   if(id=="ld"){if(!t.dataset.ok){t.dataset.ok=1;t.textContent=`تأكيد حذف القائمة و${cur.n} قناة؟`;return}await api("/lists/"+CLID,"DELETE");CLID=null;toast("تم حذف القائمة");return chans()}
+   if(x){if(!x.dataset.ok){x.dataset.ok=1;x.textContent="تأكيد؟";return}await api("/channels/"+x.dataset.x,"DELETE");toast("تم الحذف");return chans()}
+   if(id=="ac")return open({});if(r)return open(L.find(z=>z.id==r.dataset.i));
+   if(id=="cl"){if(!t.dataset.ok){t.dataset.ok=1;t.textContent="تأكيد حذف "+L.length+" قناة؟";return}const d=await api("/channels?list="+CLID,"DELETE");toast("تم حذف "+d.deleted+" قناة");TEST={};return chans()}
+   if(id=="dd"){const d=await api("/channels/dedupe","POST",{list_id:CLID});toast("حُذف "+d.deleted+" مكرر");return chans()}
+   if(id=="im")return imp(cur);if(id=="fr")return freeImp(cur);if(id=="ts")return tester(F,L)
+  }catch(err){toast(msg(err))}}}
+function imp(cur){$("oc").innerHTML=`<div class="top"><h1 style="font-size:17px">استيراد M3U</h1><button class="btn gh" id="cx">✕</button></div>
+ <p class="mu" style="font-size:13px;margin-bottom:6px">القنوات رح تنضاف لقائمة: <b style="color:var(--cy)">${esc(cur.name)}</b></p>
+ <label class="lb" for="iu">رابط قائمة M3U (اختياري، بيشتغل إذا السيرفر بيسمح)</label><input id="iu" dir="ltr" placeholder="https://…/list.m3u"><button class="btn gh" id="ig" style="margin-top:6px">جلب من الرابط</button>
+ <label class="lb" for="it">أو الصق محتوى الملف هون</label><textarea id="it" placeholder="#EXTM3U ..."></textarea>
+ <p class="mu" id="ic" style="margin:8px 0"></p><button class="btn" id="is" style="width:100%">استيراد</button>`;
+ $("ov").hidden=false;$("cx").onclick=()=>$("ov").hidden=true;
+ const cnt=()=>{const a=m3u($("it").value),h=a.filter(x=>x.url.startsWith("http://")).length;$("ic").textContent=a.length?`${a.length} قناة${h?` (منها ${h} بروابط http ما رح تشتغل بالمتصفح)`:""}`:""};$("it").oninput=cnt;
+ $("ig").onclick=async()=>{try{const r=await fetch($("iu").value.trim());if(!r.ok)throw 0;$("it").value=await r.text();cnt()}catch{toast("تعذّر الجلب، الصق المحتوى يدوياً")}};
+ $("is").onclick=async()=>{const a=m3u($("it").value);if(!a.length){toast("ما لقيت قنوات");return}$("is").disabled=true;try{let n=0;for(let i=0;i<a.length;i+=500){const r=await api("/channels/import","POST",{list:a.slice(i,i+500),list_id:CLID});n+=r.added}$("ov").hidden=true;toast(`تمت إضافة ${n} قناة`);chans()}catch(e){toast(msg(e))}$("is").disabled=false}}
+function freeImp(cur){const S=[["الأردن","https://iptv-org.github.io/iptv/countries/jo.m3u"],["العربية","https://iptv-org.github.io/iptv/languages/ara.m3u"]];
+ $("oc").innerHTML=`<div class="top"><h1 style="font-size:17px">القنوات المجانية</h1><button class="btn gh" id="cx">✕</button></div><p class="mu" style="font-size:13px;line-height:1.8">بتجلب القنوات العامة من مشروع iptv-org وتضيفها لقائمة <b style="color:var(--cy)">${esc(cur.name)}</b> (روابط https فقط، والمكرر بيتجاهل). بعدها افحصها بزر «🩺 فحص القنوات» واحذف الميتة.</p>`+S.map((s,i)=>`<button class="btn" data-s="${i}" style="width:100%;margin-top:10px">استيراد قنوات ${s[0]}</button>`).join("")+`<p class="mu" id="fmx" style="margin-top:10px"></p>`;
+ $("ov").hidden=false;$("cx").onclick=()=>$("ov").hidden=true;
+ $("oc").onclick=async e=>{const b=e.target.closest("[data-s]");if(!b)return;const s=S[+b.dataset.s];b.disabled=true;$("fmx").textContent="جاري الجلب…";
+  try{const r=await fetch(s[1]);if(!r.ok)throw 0;const a=m3u(await r.text()).filter(x=>x.url.startsWith("https://")).map(x=>({...x,grp:s[0]+(x.grp?" · "+x.grp:"")}));let n=0;for(let i=0;i<a.length;i+=500){const d=await api("/channels/import","POST",{list:a.slice(i,i+500),list_id:CLID});n+=d.added;$("fmx").textContent=`تمت إضافة ${n} من ${a.length}…`}$("fmx").textContent=`تم: أُضيف ${n} قناة جديدة (من ${a.length})`;chans()}catch(err){$("fmx").textContent=err&&err.status===undefined?"تعذّر الجلب من المصدر":msg(err)}b.disabled=false}}
 if(TK)start();else $("lg").hidden=false;
 </script>
 </body>
